@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Class Details - Apex Fitness</title>
+  
+  
+  <meta name="description" content="Class Details - Apex Fitness">
+  <meta name="keywords" content="class, fitness, training, schedule, coaching">
+  
+  
+  <link rel="icon" type="image/png" href="images/favicon-apex.png">
+  
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  
+  
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/class-details.css">
+  <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  
+  <header class="header">
+    <div class="container">
+      <nav class="d-flex align-items-center justify-content-between" style="height: 64px;">
+        
+        
+        <a href="index.html" class="d-flex align-items-center gap-3 text-decoration-none">
+          <img src="images/logo-red.png" alt="Apex" class="logo">
+          <span class="text-white fs-5 tracking-tighter" style="font-family: 'Syncopate', sans-serif; font-weight: 700;">APEX.</span>
+        </a>
+        
+        
+        <div class="d-none d-md-flex align-items-center gap-4">
+          <a href="index.html#about" class="nav-link" data-i18n="nav.about">About</a>
+          <a href="index.html#pricing" class="nav-link" data-i18n="nav.pricing">Pricing</a>
+          <a href="gallery.html" class="nav-link" data-i18n="nav.gallery">Gallery</a>
+          <a href="index.html#classes" class="nav-link" data-i18n="nav.classes">Classes</a>
+          <a href="index.html#trainers" class="nav-link" data-i18n="nav.trainers">Trainers</a>
+          <a href="index.html#contact" class="nav-link" data-i18n="nav.contact">Contact</a>
+          <a href="schedule.html" class="nav-link" data-i18n="nav.schedule">Schedule</a>
+          
+          
+          <div class="lang-dropdown">
+            <button class="nav-link lang-btn border-0 bg-transparent">EN</button>
+            <div class="lang-dropdown-menu">
+              <button class="lang-dropdown-item lang-option active" data-lang="en">English</button>
+              <div class="lang-dropdown-divider"></div>
+              <button class="lang-dropdown-item lang-option" data-lang="ar">العربية</button>
+            </div>
+          </div>
+
+          
+          <a href="login.html" class="profile-link ms-2" title="Login / Sign Up">
+            <svg class="profile-icon-svg" viewBox="0 0 24 24">
+              <circle cx="12" cy="8" r="4" />
+              <path d="M4 20c0-4 4-7 8-7s8 3 8 7" />
+            </svg>
+          </a>
+        </div>
+        
+        
+        <div class="d-flex d-md-none align-items-center gap-3">
+          <div class="lang-dropdown">
+            <button class="nav-link lang-btn border-0 bg-transparent">EN</button>
+            <div class="lang-dropdown-menu">
+              <button class="lang-dropdown-item lang-option active" data-lang="en">EN</button>
+              <div class="lang-dropdown-divider"></div>
+              <button class="lang-dropdown-item lang-option" data-lang="ar">AR</button>
+            </div>
+          </div>
+
+          <button id="mobileMenuBtn" class="btn text-white p-0 border-0">
+            <i class="bi bi-list" style="font-size: 28px;"></i>
+          </button>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  
+  <main class="class-details-main">
+    
+    
+    <section class="class-hero">
+      <div class="class-hero-bg"></div>
+      <div class="container">
+        <div class="class-hero-content">
+          
+          <div class="back-link-container">
+            <a href="index.html" class="back-link-hero" data-i18n="nav.backHome">← BACK HOME</a>
+          </div>
+          <div class="class-image-wrapper">
+            <a href="#" id="classImageLink" class="class-image-link">
+              <div class="class-image-container">
+                <img id="classImage" src="images/class-hiit.jpg" alt="Class" class="class-image">
+                <div class="class-image-overlay"></div>
+                <div class="class-badge" id="classBadge">
+                  <i class="bi bi-lightning-charge"></i>
+                  <span id="classLevel">Advanced</span>
+                </div>
+              </div>
+            </a>
+          </div>
+          
+          <div class="class-hero-info">
+            <div class="class-header-content">
+              <p class="class-category" id="classCategory">High Intensity</p>
+              <h1 class="class-name" id="className">HIIT Training</h1>
+              
+              <div class="class-stats">
+                <div class="stat-item">
+                  <i class="bi bi-clock"></i>
+                  <span id="classDuration">45 Min</span>
+                </div>
+                <div class="stat-item">
+                  <i class="bi bi-fire"></i>
+                  <span id="classCalories">450-550</span>
+                </div>
+                <div class="stat-item">
+                  <i class="bi bi-people"></i>
+                  <span id="classCapacity">20 People</span>
+                </div>
+              </div>
+              
+              <p class="class-description" id="classDescription">
+                Intense interval training combining cardio and strength exercises for maximum calorie burn.
+              </p>
+              
+              <div class="class-actions">
+                <button class="btn-primary" data-i18n="class.joinNow">JOIN NOW</button>
+                <button class="btn-secondary" data-i18n="class.learnMore">LEARN MORE</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    
+    <section class="class-section">
+      <div class="container">
+        <div class="text-center mb-5">
+          <h2 class="section-title" data-i18n="class.instructor">YOUR INSTRUCTOR</h2>
+        </div>
+        
+        <div class="trainer-spotlight">
+          <div class="trainer-spotlight-image">
+            <a href="#" id="trainerLink" class="trainer-link">
+              <img id="trainerImage" src="images/trainer-matthew.jpg" alt="Trainer" class="trainer-img">
+              <div class="trainer-overlay">
+                <span class="view-profile-badge" data-i18n="class.viewProfile">View Profile</span>
+              </div>
+            </a>
+          </div>
+          
+          <div class="trainer-spotlight-info">
+            <h3 id="trainerName" class="trainer-name">Matthew Johnson</h3>
+            <p id="trainerSpecialty" class="trainer-specialty">Strength Coach</p>
+            <p id="trainerBio" class="trainer-bio">
+              Dedicated fitness professional with 12+ years of experience in high-intensity training and performance coaching.
+            </p>
+            
+            <div class="trainer-highlights">
+              <div class="highlight-item">
+                <i class="bi bi-star-fill"></i>
+                <span id="trainerRating">4.9/5</span>
+              </div>
+              <div class="highlight-item">
+                <i class="bi bi-people-fill"></i>
+                <span id="trainerClients">500+ Clients</span>
+              </div>
+              <div class="highlight-item">
+                <i class="bi bi-award-fill"></i>
+                <span id="trainerCerts">4 Certifications</span>
+              </div>
+            </div>
+            
+            <a href="#" id="trainerProfileLink" class="trainer-profile-btn" data-i18n="class.viewProfile">VIEW FULL PROFILE →</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    
+    <section class="class-section" style="background: #050505;">
+      <div class="container">
+        <div class="text-center mb-5">
+          <h2 class="section-title" data-i18n="class.schedule">CLASS SCHEDULE</h2>
+          <p class="section-subtitle" data-i18n="class.scheduleDesc">Pick a time that works for you</p>
+        </div>
+        
+        <div class="schedule-grid">
+          <div class="schedule-card visible-on-scroll">
+            <div class="schedule-day" data-i18n="class.monday">Monday</div>
+            <div class="schedule-times">
+              <div class="time-slot">
+                <span class="time">07:00 AM</span>
+                <span class="availability">Available</span>
+              </div>
+              <div class="time-slot">
+                <span class="time">06:00 PM</span>
+                <span class="availability">Available</span>
+              </div>
+            </div>
+            <button class="schedule-btn" data-i18n="class.enroll">ENROLL</button>
+          </div>
+          
+          <div class="schedule-card visible-on-scroll">
+            <div class="schedule-day" data-i18n="class.wednesday">Wednesday</div>
+            <div class="schedule-times">
+              <div class="time-slot">
+                <span class="time">09:00 AM</span>
+                <span class="availability">Available</span>
+              </div>
+              <div class="time-slot">
+                <span class="time">07:00 PM</span>
+                <span class="availability">Full</span>
+              </div>
+            </div>
+            <button class="schedule-btn" data-i18n="class.enroll">ENROLL</button>
+          </div>
+          
+          <div class="schedule-card visible-on-scroll">
+            <div class="schedule-day" data-i18n="class.friday">Friday</div>
+            <div class="schedule-times">
+              <div class="time-slot">
+                <span class="time">08:00 AM</span>
+                <span class="availability">Available</span>
+              </div>
+              <div class="time-slot">
+                <span class="time">05:00 PM</span>
+                <span class="availability">Available</span>
+              </div>
+            </div>
+            <button class="schedule-btn" data-i18n="class.enroll">ENROLL</button>
+          </div>
+          
+          <div class="schedule-card visible-on-scroll">
+            <div class="schedule-day" data-i18n="class.saturday">Saturday</div>
+            <div class="schedule-times">
+              <div class="time-slot">
+                <span class="time">10:00 AM</span>
+                <span class="availability">Available</span>
+              </div>
+              <div class="time-slot">
+                <span class="time">04:00 PM</span>
+                <span class="availability">Available</span>
+              </div>
+            </div>
+            <button class="schedule-btn" data-i18n="class.enroll">ENROLL</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    
+    <section class="class-section">
+      <div class="container">
+        <div class="text-center mb-5">
+          <h2 class="section-title" data-i18n="class.benefits">WHAT YOU'LL GAIN</h2>
+        </div>
+        
+        <div class="benefits-grid">
+          <div class="benefit-card visible-on-scroll">
+            <div class="benefit-icon">
+              <i class="bi bi-heart-pulse"></i>
+            </div>
+            <h3 class="benefit-title" data-i18n="class.benefit1">Cardiovascular Strength</h3>
+            <p class="benefit-desc">Improve your heart health and endurance with intense interval training.</p>
+          </div>
+          
+          <div class="benefit-card visible-on-scroll">
+            <div class="benefit-icon">
+              <i class="bi bi-lightning-charge"></i>
+            </div>
+            <h3 class="benefit-title" data-i18n="class.benefit2">Maximum Calorie Burn</h3>
+            <p class="benefit-desc">Burn up to 550 calories in a single 45-minute session.</p>
+          </div>
+          
+          <div class="benefit-card visible-on-scroll">
+            <div class="benefit-icon">
+              <i class="bi bi-graph-up"></i>
+            </div>
+            <h3 class="benefit-title" data-i18n="class.benefit3">Metabolism Boost</h3>
+            <p class="benefit-desc">Experience the afterburn effect that lasts for hours post-workout.</p>
+          </div>
+          
+          <div class="benefit-card visible-on-scroll">
+            <div class="benefit-icon">
+              <i class="bi bi-person-check"></i>
+            </div>
+            <h3 class="benefit-title" data-i18n="class.benefit4">Full Body Workout</h3>
+            <p class="benefit-desc">Engage every muscle group in a comprehensive training session.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    
+    <section class="class-section" style="background: #050505;">
+      <div class="container">
+        <div class="text-center mb-5">
+          <h2 class="section-title" data-i18n="class.equipment">EQUIPMENT NEEDED</h2>
+        </div>
+        
+        <div class="equipment-grid">
+          <div class="equipment-item visible-on-scroll">
+            <div class="equipment-icon">
+              <i class="bi bi-box"></i>
+            </div>
+            <h4 class="equipment-name" data-i18n="class.dumbbells">Dumbbells</h4>
+            <p class="equipment-desc">Various weights available</p>
+          </div>
+          
+          <div class="equipment-item visible-on-scroll">
+            <div class="equipment-icon">
+              <i class="bi bi-box"></i>
+            </div>
+            <h4 class="equipment-name" data-i18n="class.mat">Exercise Mat</h4>
+            <p class="equipment-desc">Provided by gym</p>
+          </div>
+          
+          <div class="equipment-item visible-on-scroll">
+            <div class="equipment-icon">
+              <i class="bi bi-box"></i>
+            </div>
+            <h4 class="equipment-name" data-i18n="class.resistance">Resistance Bands</h4>
+            <p class="equipment-desc">All resistance levels</p>
+          </div>
+          
+          <div class="equipment-item visible-on-scroll">
+            <div class="equipment-icon">
+              <i class="bi bi-box"></i>
+            </div>
+            <h4 class="equipment-name" data-i18n="class.water">Water Bottle</h4>
+            <p class="equipment-desc">Bring your own</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    
+    <section class="class-cta-section">
+      <div class="container">
+        <div class="cta-content">
+          <h2 class="cta-title" data-i18n="class.ready">READY TO PUSH YOUR LIMITS?</h2>
+          <p class="cta-subtitle" data-i18n="class.ctaDesc">Join our community and start your transformation today</p>
+          <div class="cta-buttons">
+            <button class="btn-primary" data-i18n="class.joinNow">JOIN NOW</button>
+            <button class="btn-secondary" data-i18n="class.contactUs">CONTACT US</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  
+  <footer class="footer">
+    <div class="footer-bg-decoration"></div>
+    
+    <div class="container footer-content">
+      <div class="footer-grid">
+        
+        
+        <div class="footer-brand">
+          <a href="index.html" class="d-flex align-items-center gap-3 text-decoration-none mb-4">
+            <img src="images/logo-red.png" alt="Apex" class="logo" style="height: 36px;">
+            <span class="text-white fs-5 tracking-tighter" style="font-family: 'Syncopate', sans-serif; font-weight: 700;">APEX.</span>
+          </a>
+          <p class="text-secondary mb-4" style="font-size: 0.875rem; line-height: 1.75;" data-i18n="footer.description">
+            The premier fitness destination. We provide elite equipment, world-class trainers, and a community that pushes you to be your absolute best.
+          </p>
+        </div>
+        
+        
+        <div class="footer-links-wrapper">
+          <div>
+            <h4 class="footer-heading" data-i18n="footer.navigation">NAVIGATION</h4>
+            <ul class="footer-links">
+              <li class="footer-link-item">
+                <a href="index.html#about" class="footer-link" data-i18n="footer.about">About Us</a>
+              </li>
+              <li class="footer-link-item">
+                <a href="index.html#classes" class="footer-link" data-i18n="nav.classes">Classes</a>
+              </li>
+              <li class="footer-link-item">
+                <a href="index.html#trainers" class="footer-link" data-i18n="nav.trainers">Trainers</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      
+      <div class="footer-bottom">
+        <p class="footer-copyright" data-i18n="footer.rights">© 2024 Apex Fitness. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  
+  
+  <script src="js/main.js"></script>
+  
+  
+  <script src="js/class-details.js"></script>
+
+</body>
+</html>

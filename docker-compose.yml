@@ -1,0 +1,176 @@
+version: '3.8'
+
+services:
+
+  # ── Infrastructure ───────────────────────────────────────────────────────────
+  mysql-auth:
+    image: mysql:8.0
+    container_name: apex-mysql-auth
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: auth_db
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_auth_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      retries: 5
+
+  mysql-member:
+    image: mysql:8.0
+    container_name: apex-mysql-member
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: member_db
+    ports:
+      - "3308:3306"
+    volumes:
+      - mysql_member_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      retries: 5
+
+  mysql-trainer:
+    image: mysql:8.0
+    container_name: apex-mysql-trainer
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: trainer_db
+    ports:
+      - "3309:3306"
+    volumes:
+      - mysql_trainer_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      retries: 5
+
+  mysql-payment:
+    image: mysql:8.0
+    container_name: apex-mysql-payment
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: payment_db
+    ports:
+      - "3310:3306"
+    volumes:
+      - mysql_payment_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      retries: 5
+
+  eureka-server:
+      build: ./eureka-server
+      container_name: apex-eureka
+      ports:
+        - "8761:8761"
+      healthcheck:
+        test: ["CMD", "curl", "-f", "http://localhost:8761/actuator/health"]
+        interval: 30s
+        timeout: 15s
+        retries: 20
+        start_period: 180s
+
+  config-server:
+    build: ./config-server
+    container_name: apex-config
+    ports:
+      - "8888:8888"
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+    environment:
+      EUREKA_URI: http://eureka-server:8761/eureka
+
+  # ── Microservices ────────────────────────────────────────────────────────────
+  auth-service:
+    build: ./auth-service
+    container_name: apex-auth
+    ports:
+      - "8081:8081"
+    depends_on:
+      mysql-auth:
+        condition: service_healthy
+      config-server:
+        condition: service_started
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-auth:3306/auth_db
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      EUREKA_URI: http://eureka-server:8761/eureka
+      CONFIG_URI: http://config-server:8888
+
+  member-service:
+    build: ./member-service
+    container_name: apex-member
+    ports:
+      - "8082:8082"
+    depends_on:
+      mysql-member:
+        condition: service_healthy
+      auth-service:
+        condition: service_started
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-member:3306/member_db
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      EUREKA_URI: http://eureka-server:8761/eureka
+      CONFIG_URI: http://config-server:8888
+
+  trainer-service:
+    build: ./trainer-service
+    container_name: apex-trainer
+    ports:
+      - "8083:8083"
+    depends_on:
+      mysql-trainer:
+        condition: service_healthy
+      auth-service:
+        condition: service_started
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-trainer:3306/trainer_db
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      EUREKA_URI: http://eureka-server:8761/eureka
+      CONFIG_URI: http://config-server:8888
+
+  payment-service:
+    build: ./payment-service
+    container_name: apex-payment
+    ports:
+      - "8084:8084"
+    depends_on:
+      mysql-payment:
+        condition: service_healthy
+      member-service:
+        condition: service_started
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-payment:3306/payment_db
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      EUREKA_URI: http://eureka-server:8761/eureka
+      CONFIG_URI: http://config-server:8888
+
+  api-gateway:
+    build: ./api-gateway
+    container_name: apex-gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      - auth-service
+      - member-service
+      - trainer-service
+      - payment-service
+    environment:
+      EUREKA_URI: http://eureka-server:8761/eureka
+      CONFIG_URI: http://config-server:8888
+
+volumes:
+  mysql_auth_data:
+  mysql_member_data:
+  mysql_trainer_data:
+  mysql_payment_data:

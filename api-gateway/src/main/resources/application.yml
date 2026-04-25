@@ -1,0 +1,123 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  config:
+    import: optional:configserver:http://config-server:8888
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      # JWT is sent in Authorization, not cookies — false avoids brittle CORS with file:// (Origin null).
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOriginPatterns:
+              - '*'
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders: "*"
+            allowCredentials: false
+      routes:
+        # Narrow routes first + lower order so they win over /api/auth/** (JWT filter).
+        - id: auth-register
+          uri: lb://auth-service
+          order: -10
+          predicates:
+            - Path=/api/auth/register
+          filters:
+            - StripPrefix=0
+        - id: auth-login
+          uri: lb://auth-service
+          order: -10
+          predicates:
+            - Path=/api/auth/login
+          filters:
+            - StripPrefix=0
+        - id: auth-secured
+          uri: lb://auth-service
+          order: 0
+          predicates:
+            - Path=/api/auth/**
+          filters:
+            - StripPrefix=0
+            - name: JwtAuthFilter
+        - id: trainer-public-active
+          uri: lb://trainer-service
+          order: -10
+          predicates:
+            - Path=/api/trainers/active
+            - Method=GET
+          filters:
+            - StripPrefix=0
+        - id: trainer-public-classes
+          uri: lb://trainer-service
+          order: -10
+          predicates:
+            - Path=/api/trainers/classes/**
+            - Method=GET
+          filters:
+            - StripPrefix=0
+        - id: trainer-public-by-id
+          uri: lb://trainer-service
+          order: -10
+          predicates:
+            - Path=/api/trainers/{id:[0-9]+}
+            - Method=GET
+          filters:
+            - StripPrefix=0
+        - id: member-service
+          uri: lb://member-service
+          predicates:
+            - Path=/api/members/**
+          filters:
+            - StripPrefix=0
+            - name: JwtAuthFilter
+        - id: trainer-service
+          uri: lb://trainer-service
+          predicates:
+            - Path=/api/trainers/**
+          filters:
+            - StripPrefix=0
+            - name: JwtAuthFilter
+        - id: payment-public
+          uri: lb://payment-service
+          order: -10
+          predicates:
+            - Path=/api/payments/plans/active
+            - Method=GET
+          filters:
+            - StripPrefix=0
+        - id: payment-service
+          uri: lb://payment-service
+          predicates:
+            - Path=/api/payments/**
+          filters:
+            - StripPrefix=0
+            - name: JwtAuthFilter
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URI:http://eureka-server:8761/eureka}
+  instance:
+    prefer-ip-address: true
+
+jwt:
+  secret: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,gateway

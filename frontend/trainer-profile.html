@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trainer Profile - Apex Fitness</title>
+  
+  
+  <meta name="description" content="Professional Trainer Profile - Apex Fitness">
+  <meta name="keywords" content="trainer, fitness, profile, coaching, training">
+  
+  
+  <link rel="icon" type="image/png" href="images/favicon-apex.png">
+  
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  
+  
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/trainer-profile.css">
+  <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  
+  <header class="header">
+    <div class="container">
+      <nav class="d-flex align-items-center justify-content-between" style="height: 64px;">
+        
+        
+        <a href="index.html" class="d-flex align-items-center gap-3 text-decoration-none">
+          <img src="images/logo-red.png" alt="Apex" class="logo">
+          <span class="text-white fs-5 tracking-tighter" style="font-family: 'Syncopate', sans-serif; font-weight: 700;">APEX.</span>
+        </a>
+        
+        
+        <div class="d-none d-md-flex align-items-center gap-4">
+          <a href="index.html#about" class="nav-link" data-i18n="nav.about">About</a>
+          <a href="index.html#pricing" class="nav-link" data-i18n="nav.pricing">Pricing</a>
+          <a href="gallery.html" class="nav-link" data-i18n="nav.gallery">Gallery</a>
+          <a href="index.html#classes" class="nav-link" data-i18n="nav.classes">Classes</a>
+          <a href="index.html#trainers" class="nav-link" data-i18n="nav.trainers">Trainers</a>
+          <a href="index.html#contact" class="nav-link" data-i18n="nav.contact">Contact</a>
+          <a href="schedule.html" class="nav-link" data-i18n="nav.schedule">Schedule</a>
+          
+          
+          <div class="lang-dropdown">
+            <button class="nav-link lang-btn border-0 bg-transparent">EN</button>
+            <div class="lang-dropdown-menu">
+              <button class="lang-dropdown-item lang-option active" data-lang="en">English</button>
+              <div class="lang-dropdown-divider"></div>
+              <button class="lang-dropdown-item lang-option" data-lang="ar">العربية</button>
+            </div>
+          </div>
+
+          
+          <a href="login.html" class="profile-link ms-2" title="Login / Sign Up">
+            <svg class="profile-icon-svg" viewBox="0 0 24 24">
+              <circle cx="12" cy="8" r="4" />
+              <path d="M4 20c0-4 4-7 8-7s8 3 8 7" />
+            </svg>
+          </a>
+        </div>
+        
+        
+        <div class="d-flex d-md-none align-items-center gap-3">
+          <div class="lang-dropdown">
+            <button class="nav-link lang-btn border-0 bg-transparent">EN</button>
+            <div class="lang-dropdown-menu">
+              <button class="lang-dropdown-item lang-option active" data-lang="en">EN</button>
+              <div class="lang-dropdown-divider"></div>
+              <button class="lang-dropdown-item lang-option" data-lang="ar">AR</button>
+            </div>
+          </div>
+
+          <button id="mobileMenuBtn" class="btn text-white p-0 border-0">
+            <i class="bi bi-list" style="font-size: 28px;"></i>
+          </button>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  
+  <main class="trainer-profile-main">
+    
+    
+    <section class="trainer-hero">
+      <div class="trainer-hero-bg"></div>
+      <div class="container">
+        <div class="trainer-hero-content">
+          
+          <div class="back-link-container">
+            <a href="index.html" class="back-link-hero" data-i18n="nav.backHome">← BACK HOME</a>
+          </div>
+          <div class="trainer-image-wrapper">
+            <a href="#" id="trainerImageLink" class="trainer-image-link">
+              <div class="trainer-image-container">
+                <img id="trainerImage" src="images/trainer-matthew.jpg" alt="Trainer" class="trainer-image">
+                <div class="trainer-image-overlay"></div>
+                <div class="trainer-badge" id="trainerBadge">
+                  <i class="bi bi-star-fill"></i>
+                  <span id="trainerRating">4.9</span>
+                </div>
+              </div>
+            </a>
+          </div>
+          
+          <div class="trainer-hero-info">
+            <div class="trainer-header-content">
+              <p class="trainer-specialty" id="trainerSpecialty">Strength Coach</p>
+              <h1 class="trainer-name" id="trainerName">Matthew Johnson</h1>
+              
+              <div class="trainer-stats">
+                <div class="stat-item">
+                  <span class="stat-number" id="trainerYears">12</span>
+                  <span class="stat-label" data-i18n="trainer.yearsExperience">Years Experience</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-number" id="trainerClients">500+</span>
+                  <span class="stat-label" data-i18n="trainer.clients">Clients Trained</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-number" id="trainerSuccess">95%</span>
+                  <span class="stat-label" data-i18n="trainer.successRate">Success Rate</span>
+                </div>
+              </div>
+              
+              <p class="trainer-bio" id="trainerBio">
+                Dedicated fitness professional with a passion for transforming lives through strength training and personalized coaching.
+              </p>
+              
+              <div class="trainer-actions">
+                <button class="btn-primary" data-i18n="trainer.bookSession">BOOK A SESSION</button>
+                <button class="btn-secondary" data-i18n="trainer.contactMe">CONTACT ME</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    
+    <section class="trainer-section">
+      <div class="container">
+        <div class="row g-5">
+          
+          <div class="col-lg-6">
+            <div class="section-card reveal-left">
+              <h2 class="section-card-title" data-i18n="trainer.aboutMe">ABOUT ME</h2>
+              <p class="section-card-text" id="trainerFullBio">
+                With over 12 years of experience in the fitness industry, I've dedicated my career to helping individuals achieve their fitness goals. My approach combines proven training methodologies with personalized nutrition guidance to deliver transformative results.
+              </p>
+              <p class="section-card-text">
+                I specialize in strength training, muscle building, and functional fitness. My training philosophy focuses on sustainable progress, injury prevention, and building a strong mindset alongside physical strength.
+              </p>
+            </div>
+          </div>
+          
+          
+          <div class="col-lg-6">
+            <div class="section-card reveal-right">
+              <h2 class="section-card-title" data-i18n="trainer.specialties">SPECIALTIES</h2>
+              <div class="specialties-grid">
+                <div class="specialty-item">
+                  <i class="bi bi-lightning-charge specialty-icon"></i>
+                  <span id="specialty1">Strength Training</span>
+                </div>
+                <div class="specialty-item">
+                  <i class="bi bi-heart-pulse specialty-icon"></i>
+                  <span id="specialty2">Muscle Building</span>
+                </div>
+                <div class="specialty-item">
+                  <i class="bi bi-person-check specialty-icon"></i>
+                  <span id="specialty3">Functional Fitness</span>
+                </div>
+                <div class="specialty-item">
+                  <i class="bi bi-graph-up specialty-icon"></i>
+                  <span id="specialty4">Performance Coaching</span>
+                </div>
+                <div class="specialty-item">
+                  <i class="bi bi-fork-knife specialty-icon"></i>
+                  <span id="specialty5">Nutrition Planning</span>
+                </div>
+                <div class="specialty-item">
+                  <i class="bi bi-target specialty-icon"></i>
+                  <span id="specialty6">Goal Achievement</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    
+    <section class="trainer-section" style="background: #050505;">
+      <div class="container">
+        <div class="text-center mb-5">
+          <h2 class="section-title" data-i18n="trainer.certifications">CERTIFICATIONS & CREDENTIALS</h2>
+        </div>
+        
+        <div class="certifications-grid">
+          <div class="certification-card visible-on-scroll">
+            <div class="cert-icon">
+              <i class="bi bi-award"></i>
+            </div>
+            <h3 class="cert-title" id="cert1Title">ACE Certified Personal Trainer</h3>
+            <p class="cert-issuer">American Council on Exercise</p>
+            <p class="cert-year">2015</p>
+          </div>
+          
+          <div class="certification-card visible-on-scroll">
+            <div class="cert-icon">
+              <i class="bi bi-award"></i>
+            </div>
+            <h3 class="cert-title" id="cert2Title">NASM Certified Strength Coach</h3>
+            <p class="cert-issuer">National Academy of Sports Medicine</p>
+            <p class="cert-year">2017</p>
+          </div>
+          
+          <div class="certification-card visible-on-scroll">
+            <div class="cert-icon">
+              <i class="bi bi-award"></i>
+            </div>
+            <h3 class="cert-title" id="cert3Title">Precision Nutrition Level 2</h3>
+            <p class="cert-issuer">Precision Nutrition</p>
+            <p class="cert-year">2018</p>
+          </div>
+          
+          <div class="certification-card visible-on-scroll">
+            <div class="cert-icon">
+              <i class="bi bi-award"></i>
+            </div>
+            <h3 class="cert-title" id="cert4Title">Advanced Sports Conditioning</h3>
+            <p class="cert-issuer">International Sports Sciences Association</p>
+            <p class="cert-year">2019</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+
+    
+    <section class="trainer-section" style="background: #050505;">
+      <div class="container">
+        <div class="text-center mb-5">
+          <h2 class="section-title" data-i18n="trainer.beforeAfter">CLIENT TRANSFORMATIONS</h2>
+          <p class="section-subtitle" data-i18n="trainer.transformationDesc">Real results from real clients</p>
+        </div>
+        
+        <div class="transformations-grid">
+          <div class="transformation-card visible-on-scroll">
+            <div class="transformation-images">
+              <div class="before-image">
+                <img src="images/trainer-matthew.jpg" alt="Before">
+                <span class="transformation-label" data-i18n="trainer.before">BEFORE</span>
+              </div>
+              <div class="transformation-arrow">
+                <i class="bi bi-arrow-right"></i>
+              </div>
+              <div class="after-image">
+                <img src="images/trainer-emily.jpg" alt="After">
+                <span class="transformation-label" data-i18n="trainer.after">AFTER</span>
+              </div>
+            </div>
+            <div class="transformation-info">
+              <h3 class="transformation-client">John Doe</h3>
+              <p class="transformation-details">Lost 25 kg • Gained Muscle • 6 Months</p>
+            </div>
+          </div>
+          
+          <div class="transformation-card visible-on-scroll">
+            <div class="transformation-images">
+              <div class="before-image">
+                <img src="images/trainer-emily.jpg" alt="Before">
+                <span class="transformation-label" data-i18n="trainer.before">BEFORE</span>
+              </div>
+              <div class="transformation-arrow">
+                <i class="bi bi-arrow-right"></i>
+              </div>
+              <div class="after-image">
+                <img src="images/trainer-benjamin.jpg" alt="After">
+                <span class="transformation-label" data-i18n="trainer.after">AFTER</span>
+              </div>
+            </div>
+            <div class="transformation-info">
+              <h3 class="transformation-client">Sarah Smith</h3>
+              <p class="transformation-details">Strength +40% • Confidence Boost • 4 Months</p>
+            </div>
+          </div>
+          
+          <div class="transformation-card visible-on-scroll">
+            <div class="transformation-images">
+              <div class="before-image">
+                <img src="images/trainer-benjamin.jpg" alt="Before">
+                <span class="transformation-label" data-i18n="trainer.before">BEFORE</span>
+              </div>
+              <div class="transformation-arrow">
+                <i class="bi bi-arrow-right"></i>
+              </div>
+              <div class="after-image">
+                <img src="images/trainer-olivia.jpg" alt="After">
+                <span class="transformation-label" data-i18n="trainer.after">AFTER</span>
+              </div>
+            </div>
+            <div class="transformation-info">
+              <h3 class="transformation-client">Mike Johnson</h3>
+              <p class="transformation-details">Body Fat -15% • Muscle Gain • 5 Months</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    
+    <section class="trainer-section">
+      <div class="container">
+        <div class="text-center mb-5">
+          <h2 class="section-title" data-i18n="trainer.reviews">CLIENT REVIEWS</h2>
+          <div class="average-rating">
+            <div class="rating-stars">
+              <i class="bi bi-star-fill"></i>
+              <i class="bi bi-star-fill"></i>
+              <i class="bi bi-star-fill"></i>
+              <i class="bi bi-star-fill"></i>
+              <i class="bi bi-star-fill"></i>
+            </div>
+            <span class="rating-number" id="avgRating">4.9</span>
+            <span class="rating-count" id="reviewCount">(127 reviews)</span>
+          </div>
+        </div>
+        
+        <div class="reviews-grid">
+          <div class="review-card visible-on-scroll">
+            <div class="review-header">
+              <div class="reviewer-avatar">
+                <i class="bi bi-person-circle"></i>
+              </div>
+              <div class="reviewer-info">
+                <h4 class="reviewer-name">Alex Thompson</h4>
+                <div class="review-rating">
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                </div>
+              </div>
+            </div>
+            <p class="review-text">
+              "Absolutely fantastic trainer! Matthew transformed my entire approach to fitness. His expertise and dedication are unmatched. Highly recommended!"
+            </p>
+            <span class="review-date">2 weeks ago</span>
+          </div>
+          
+          <div class="review-card visible-on-scroll">
+            <div class="review-header">
+              <div class="reviewer-avatar">
+                <i class="bi bi-person-circle"></i>
+              </div>
+              <div class="reviewer-info">
+                <h4 class="reviewer-name">Jessica Lee</h4>
+                <div class="review-rating">
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                </div>
+              </div>
+            </div>
+            <p class="review-text">
+              "Best investment I've made for my health! Matthew's personalized approach and constant support made all the difference in my fitness journey."
+            </p>
+            <span class="review-date">1 month ago</span>
+          </div>
+          
+          <div class="review-card visible-on-scroll">
+            <div class="review-header">
+              <div class="reviewer-avatar">
+                <i class="bi bi-person-circle"></i>
+              </div>
+              <div class="reviewer-info">
+                <h4 class="reviewer-name">David Martinez</h4>
+                <div class="review-rating">
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                </div>
+              </div>
+            </div>
+            <p class="review-text">
+              "Professional, knowledgeable, and incredibly motivating. Matthew goes above and beyond to ensure his clients succeed. 10/10!"
+            </p>
+            <span class="review-date">1 month ago</span>
+          </div>
+        </div>
+        
+        
+        <div class="add-review-section">
+          <h3 class="add-review-title" data-i18n="trainer.leaveReview">LEAVE A REVIEW</h3>
+          <form class="review-form" id="reviewForm">
+            <div class="form-group">
+              <label data-i18n="trainer.yourName">Your Name</label>
+              <input type="text" class="form-control" required>
+            </div>
+            
+            <div class="form-group">
+              <label data-i18n="trainer.yourRating">Your Rating</label>
+              <div class="rating-input">
+                <input type="radio" name="rating" value="5" id="rating5">
+                <label for="rating5" class="rating-star"><i class="bi bi-star-fill"></i></label>
+                
+                <input type="radio" name="rating" value="4" id="rating4">
+                <label for="rating4" class="rating-star"><i class="bi bi-star-fill"></i></label>
+                
+                <input type="radio" name="rating" value="3" id="rating3">
+                <label for="rating3" class="rating-star"><i class="bi bi-star-fill"></i></label>
+                
+                <input type="radio" name="rating" value="2" id="rating2">
+                <label for="rating2" class="rating-star"><i class="bi bi-star-fill"></i></label>
+                
+                <input type="radio" name="rating" value="1" id="rating1">
+                <label for="rating1" class="rating-star"><i class="bi bi-star-fill"></i></label>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label data-i18n="trainer.yourReview">Your Review</label>
+              <textarea class="form-control" rows="4" required></textarea>
+            </div>
+            
+            <button type="submit" class="btn-primary" data-i18n="trainer.submitReview">SUBMIT REVIEW</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    
+    <section class="trainer-cta-section">
+      <div class="container">
+        <div class="cta-content">
+          <h2 class="cta-title" data-i18n="trainer.readyToStart">READY TO TRANSFORM YOUR BODY?</h2>
+          <p class="cta-subtitle" data-i18n="trainer.ctaDescription">Book your first session with me today and start your fitness journey</p>
+          <div class="cta-buttons">
+            <button class="btn-primary" data-i18n="trainer.bookNow">BOOK NOW</button>
+            <button class="btn-secondary" data-i18n="trainer.learnMore">LEARN MORE</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  
+  <footer class="footer">
+    <div class="footer-bg-decoration"></div>
+    
+    <div class="container footer-content">
+      <div class="footer-grid">
+        
+        
+        <div class="footer-brand">
+          <a href="index.html" class="d-flex align-items-center gap-3 text-decoration-none mb-4">
+            <img src="images/logo-red.png" alt="Apex" class="logo" style="height: 36px;">
+            <span class="text-white fs-5 tracking-tighter" style="font-family: 'Syncopate', sans-serif; font-weight: 700;">APEX.</span>
+          </a>
+          <p class="text-secondary mb-4" style="font-size: 0.875rem; line-height: 1.75;" data-i18n="footer.description">
+            The premier fitness destination. We provide elite equipment, world-class trainers, and a community that pushes you to be your absolute best.
+          </p>
+        </div>
+        
+        
+        <div class="footer-links-wrapper">
+          <div>
+            <h4 class="footer-heading" data-i18n="footer.navigation">NAVIGATION</h4>
+            <ul class="footer-links">
+              <li class="footer-link-item">
+                <a href="index.html#about" class="footer-link" data-i18n="footer.about">About Us</a>
+              </li>
+              <li class="footer-link-item">
+                <a href="index.html#trainers" class="footer-link" data-i18n="nav.trainers">Trainers</a>
+              </li>
+              <li class="footer-link-item">
+                <a href="index.html#classes" class="footer-link" data-i18n="nav.classes">Classes</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      
+      <div class="footer-bottom">
+        <p class="footer-copyright" data-i18n="footer.rights">© 2024 Apex Fitness. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  
+  
+  <script src="js/main.js"></script>
+  
+  
+  <script src="js/trainer-profile.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment - Apex Fitness</title>
+  
+  
+  <meta name="description" content="Secure Payment - Apex Fitness">
+  <meta name="keywords" content="payment, membership, subscription, fitness">
+  
+  
+  <link rel="icon" type="image/png" href="images/favicon-apex.png">
+  
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  
+  
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/payment.css">
+  <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
+  <script>
+  async function makePayment(memberId, amount) {
+    const result = await apiFetch('/api/payments', {
+      method: 'POST',
+      body: JSON.stringify({
+        memberId: memberId,
+        amount: amount,
+        paymentType: 'MEMBERSHIP',
+        description: 'Monthly membership payment'
+      })
+    });
+    alert('Payment done! Ref: ' + result.transactionReference);
+  }
+  </script>
+
+</head>
+<body>
+
+  
+  <header class="header">
+    <div class="container">
+      <nav class="d-flex align-items-center justify-content-between" style="height: 64px;">
+        
+        
+        <a href="index.html" class="d-flex align-items-center gap-3 text-decoration-none">
+          <img src="images/logo-red.png" alt="Apex" class="logo">
+          <span class="text-white fs-5 tracking-tighter" style="font-family: 'Syncopate', sans-serif; font-weight: 700;">APEX.</span>
+        </a>
+        
+        
+        <div class="d-none d-md-flex align-items-center gap-4">
+          <a href="index.html#about" class="nav-link" data-i18n="nav.about">About</a>
+          <a href="index.html#pricing" class="nav-link" data-i18n="nav.pricing">Pricing</a>
+          <a href="gallery.html" class="nav-link" data-i18n="nav.gallery">Gallery</a>
+          <a href="index.html#classes" class="nav-link" data-i18n="nav.classes">Classes</a>
+          <a href="index.html#trainers" class="nav-link" data-i18n="nav.trainers">Trainers</a>
+          <a href="index.html#contact" class="nav-link" data-i18n="nav.contact">Contact</a>
+          <a href="schedule.html" class="nav-link" data-i18n="nav.schedule">Schedule</a>
+          
+          
+          <div class="lang-dropdown">
+            <button class="nav-link lang-btn border-0 bg-transparent">EN</button>
+            <div class="lang-dropdown-menu">
+              <button class="lang-dropdown-item lang-option active" data-lang="en">English</button>
+              <div class="lang-dropdown-divider"></div>
+              <button class="lang-dropdown-item lang-option" data-lang="ar">العربية</button>
+            </div>
+          </div>
+
+          
+          <!-- Profile/Login Section -->
+          <div id="profileHeaderSection" style="position: relative;">
+            <a href="login.html" id="loginLink" class="profile-link ms-2" title="Login / Sign Up">
+              <svg class="profile-icon-svg" viewBox="0 0 24 24">
+                <circle cx="12" cy="8" r="4" />
+                <path d="M4 20c0-4 4-7 8-7s8 3 8 7" />
+              </svg>
+            </a>
+            <button id="profileIconBtn" class="profile-link ms-2" style="display: none; background: none; border: none; cursor: pointer; padding: 0;">
+              <i class="bi bi-person-circle" style="font-size: 24px; color: white;"></i>
+            </button>
+            <div id="profileDropdown" class="profile-dropdown-menu" style="display: none; position: absolute; top: 110%; right: 0; background: rgba(0, 0, 0, 0.95); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; min-width: 180px; z-index: 1000;">
+              <a href="profile.html" style="display: block; padding: 12px 20px; color: white; text-decoration: none; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">My Profile</a>
+              <button id="logoutHeaderBtn" style="display: block; width: 100%; padding: 12px 20px; background: none; border: none; color: #ff0000; text-align: left; cursor: pointer; font-size: 0.9rem;">Logout</button>
+            </div>
+          </div>
+        </div>
+        
+        
+        <div class="d-flex d-md-none align-items-center gap-3">
+          <div class="lang-dropdown">
+            <button class="nav-link lang-btn border-0 bg-transparent">EN</button>
+            <div class="lang-dropdown-menu">
+              <button class="lang-dropdown-item lang-option active" data-lang="en">EN</button>
+              <div class="lang-dropdown-divider"></div>
+              <button class="lang-dropdown-item lang-option" data-lang="ar">AR</button>
+            </div>
+          </div>
+
+          <button id="mobileMenuBtn" class="btn text-white p-0 border-0">
+            <i class="bi bi-list" style="font-size: 28px;"></i>
+          </button>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  
+  <div style="margin-top: 80px; display: flex; justify-content: flex-end; padding: 12px 0; background: #000000; border-bottom: 1px solid rgba(255,255,255,0.05);" class="payment-back-nav">
+    <div class="container" style="display: flex; justify-content: flex-end;">
+      <a href="index.html" class="back-link-hero" data-i18n="nav.backHome">← BACK HOME</a>
+    </div>
+  </div>
+
+  
+  <main class="payment-main">
+    
+    
+    <section class="payment-header">
+      <div class="container">
+        <h1 class="payment-title" data-i18n="payment.title">SECURE PAYMENT</h1>
+        <p class="payment-subtitle" data-i18n="payment.subtitle">Choose your membership plan and payment method</p>
+      </div>
+    </section>
+
+    
+    <section class="payment-section">
+      <div class="container">
+        <div class="payment-container">
+          
+          
+          <div class="order-summary">
+            <h2 class="summary-title" data-i18n="payment.orderSummary">ORDER SUMMARY</h2>
+            
+            <div class="summary-card">
+              <div class="summary-item">
+                <span class="summary-label" data-i18n="payment.planName">Plan Name</span>
+                <span class="summary-value" id="summaryPlanName">BASIC</span>
+              </div>
+              
+              <div class="summary-item">
+                <span class="summary-label" data-i18n="payment.duration">Duration</span>
+                <span class="summary-value" id="summaryDuration">1 Month</span>
+              </div>
+              
+              <div class="summary-item">
+                <span class="summary-label" data-i18n="payment.features">Features</span>
+                <div class="summary-features" id="summaryFeatures">
+                  <div class="feature-item">
+                    <i class="bi bi-check-circle"></i>
+                    <span>All gym equipment access</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="summary-divider"></div>
+              
+              <div class="summary-total">
+                <span class="total-label" data-i18n="payment.total">TOTAL</span>
+                <span class="total-price" id="summaryPrice">$49.99</span>
+              </div>
+            </div>
+          </div>
+
+          
+          <div class="payment-methods-section">
+            <h2 class="methods-title" data-i18n="payment.selectMethod">SELECT PAYMENT METHOD</h2>
+            
+            <div class="payment-methods">
+              
+              
+              <div class="payment-method-group">
+                <label class="payment-method-option" id="cardMethod">
+                  <input type="radio" name="paymentMethod" value="card" checked>
+                  <div class="method-content">
+                    <div class="method-icon">
+                      <i class="bi bi-credit-card"></i>
+                    </div>
+                    <div class="method-info">
+                      <h3 class="method-title" data-i18n="payment.creditCard">Credit/Debit Card</h3>
+                      <p class="method-desc" data-i18n="payment.cardDesc">Visa, Mastercard, and more</p>
+                    </div>
+                  </div>
+                </label>
+                
+                
+                <div class="card-form-container" id="cardFormContainer">
+                  <form class="card-form">
+                    <div class="form-group">
+                      <label class="form-label" data-i18n="payment.cardHolder">Cardholder Name</label>
+                      <input type="text" class="form-control" placeholder="John Doe" required>
+                    </div>
+                    
+                    <div class="form-group">
+                      <label class="form-label" data-i18n="payment.cardNumber">Card Number</label>
+                      <input type="text" class="form-control" placeholder="1234 5678 9012 3456" maxlength="19" required>
+                    </div>
+                    
+                    <div class="form-row">
+                      <div class="form-group">
+                        <label class="form-label" data-i18n="payment.expiryDate">Expiry Date</label>
+                        <input type="text" class="form-control" placeholder="MM/YY" maxlength="5" required>
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label" data-i18n="payment.cvv">CVV</label>
+                        <input type="text" class="form-control" placeholder="123" maxlength="3" required>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+
+              
+              <div class="payment-method-group">
+                <label class="payment-method-option" id="ewalletMethod">
+                  <input type="radio" name="paymentMethod" value="ewallet">
+                  <div class="method-content">
+                    <div class="method-icon">
+                      <i class="bi bi-wallet2"></i>
+                    </div>
+                    <div class="method-info">
+                      <h3 class="method-title" data-i18n="payment.eWallet">Mobile Wallet</h3>
+                      <p class="method-desc" data-i18n="payment.eWalletDesc">Vodafone Cash, Orange Money, etc.</p>
+                    </div>
+                  </div>
+                </label>
+                
+                
+                <div class="ewallet-form-container" id="ewalletFormContainer">
+                  <form class="ewallet-form">
+                    <div class="wallet-options">
+                      <label class="wallet-option">
+                        <input type="radio" name="walletProvider" value="vodafone" checked>
+                        <div class="wallet-item">
+                          <div class="wallet-icon">
+                            <i class="bi bi-phone"></i>
+                          </div>
+                          <span>Vodafone Cash</span>
+                        </div>
+                      </label>
+                      
+                      <label class="wallet-option">
+                        <input type="radio" name="walletProvider" value="orange">
+                        <div class="wallet-item">
+                          <div class="wallet-icon">
+                            <i class="bi bi-phone"></i>
+                          </div>
+                          <span>Orange Money</span>
+                        </div>
+                      </label>
+                      
+                      <label class="wallet-option">
+                        <input type="radio" name="walletProvider" value="etisalat">
+                        <div class="wallet-item">
+                          <div class="wallet-icon">
+                            <i class="bi bi-phone"></i>
+                          </div>
+                          <span>Etisalat Cash</span>
+                        </div>
+                      </label>
+                    </div>
+                    
+                    <div class="form-group">
+                      <label class="form-label" data-i18n="payment.phoneNumber">Phone Number</label>
+                      <input type="tel" class="form-control" placeholder="+20 123 456 7890" required>
+                    </div>
+                  </form>
+                </div>
+              </div>
+
+              
+              <div class="payment-method-group">
+                <label class="payment-method-option" id="instapayMethod">
+                  <input type="radio" name="paymentMethod" value="instapay">
+                  <div class="method-content">
+                    <div class="method-icon">
+                      <i class="bi bi-lightning-fill"></i>
+                    </div>
+                    <div class="method-info">
+                      <h3 class="method-title" data-i18n="payment.instaPay">InstaPay</h3>
+                      <p class="method-desc" data-i18n="payment.instaPayDesc">Fast and secure bank transfer</p>
+                    </div>
+                  </div>
+                </label>
+                
+                
+                <div class="instapay-form-container" id="instapayFormContainer">
+                  <form class="instapay-form">
+                    <div class="form-group">
+                      <label class="form-label" data-i18n="payment.accountNumber">Account Number</label>
+                      <input type="text" class="form-control" placeholder="1234567890" required>
+                    </div>
+                    
+                    <div class="form-group">
+                      <label class="form-label" data-i18n="payment.bankName">Bank Name</label>
+                      <select class="form-control" required>
+                        <option value="">Select Bank</option>
+                        <option value="nbe">National Bank of Egypt</option>
+                        <option value="cib">CIB</option>
+                        <option value="ahli">Ahli Bank</option>
+                        <option value="aub">Arab African International Bank</option>
+                      </select>
+                    </div>
+                  </form>
+                </div>
+              </div>
+
+              
+              <div class="payment-method-group">
+                <label class="payment-method-option" id="cashMethod">
+                  <input type="radio" name="paymentMethod" value="cash">
+                  <div class="method-content">
+                    <div class="method-icon">
+                      <i class="bi bi-cash-coin"></i>
+                    </div>
+                    <div class="method-info">
+                      <h3 class="method-title" data-i18n="payment.cashPayment">Pay at Gym</h3>
+                      <p class="method-desc" data-i18n="payment.cashDesc">Pay in cash when you visit</p>
+                    </div>
+                  </div>
+                </label>
+                
+                
+                <div class="cash-form-container" id="cashFormContainer">
+                  <div class="cash-info">
+                    <div class="info-icon">
+                      <i class="bi bi-info-circle"></i>
+                    </div>
+                    <p class="info-text" data-i18n="payment.cashInfo">
+                      You can pay in cash when you visit our gym. Your membership will be activated after payment.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        
+        <div class="customer-info-section">
+          <h2 class="info-title" data-i18n="payment.customerInfo">CUSTOMER INFORMATION</h2>
+          
+          <form class="customer-form">
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" data-i18n="payment.fullName">Full Name</label>
+                <input type="text" class="form-control" id="customerName" placeholder="John Doe" required>
+              </div>
+              
+              <div class="form-group">
+                <label class="form-label" data-i18n="payment.email">Email Address</label>
+                <input type="email" class="form-control" id="customerEmail" placeholder="john@example.com" required>
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" data-i18n="payment.phone">Phone Number</label>
+                <input type="tel" class="form-control" id="customerPhone" placeholder="+20 123 456 7890" required>
+              </div>
+              
+              <div class="form-group">
+                <label class="form-label" data-i18n="payment.age">Age</label>
+                <input type="number" class="form-control" id="customerAge" placeholder="25" min="18" required>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label" data-i18n="payment.address">Address</label>
+              <input type="text" class="form-control" id="customerAddress" placeholder="123 Main Street, City" required>
+            </div>
+            
+            <div class="form-group">
+              <label class="form-checkbox">
+                <input type="checkbox" id="termsCheckbox" required>
+                <span data-i18n="payment.agreeTerms">I agree to the terms and conditions</span>
+              </label>
+            </div>
+          </form>
+        </div>
+
+        
+        <div class="payment-actions">
+          <button class="btn-secondary" id="cancelBtn" data-i18n="payment.cancel">CANCEL</button>
+          <button class="btn-primary" id="completeBtn" data-i18n="payment.completePayment">COMPLETE PAYMENT</button>
+        </div>
+      </div>
+    </section>
+
+    
+    <div class="payment-modal" id="successModal">
+      <div class="modal-content">
+        <div class="modal-icon success">
+          <i class="bi bi-check-circle"></i>
+        </div>
+        <h2 class="modal-title" data-i18n="payment.successTitle">Payment Successful!</h2>
+        <p class="modal-message" data-i18n="payment.successMsg">Your membership has been activated. Welcome to Apex!</p>
+        <button class="btn-primary" id="closeModalBtn" data-i18n="payment.backHome">BACK TO HOME</button>
+      </div>
+    </div>
+  </main>
+
+  
+  <footer class="footer">
+    <div class="footer-bg-decoration"></div>
+    
+    <div class="container footer-content">
+      <div class="footer-grid">
+        
+        
+        <div class="footer-brand">
+          <a href="index.html" class="d-flex align-items-center gap-3 text-decoration-none mb-4">
+            <img src="images/logo-red.png" alt="Apex" class="logo" style="height: 36px;">
+            <span class="text-white fs-5 tracking-tighter" style="font-family: 'Syncopate', sans-serif; font-weight: 700;">APEX.</span>
+          </a>
+          <p class="text-secondary mb-4" style="font-size: 0.875rem; line-height: 1.75;" data-i18n="footer.description">
+            The premier fitness destination. We provide elite equipment, world-class trainers, and a community that pushes you to be your absolute best.
+          </p>
+        </div>
+        
+        
+        <div class="footer-links-wrapper">
+          <div>
+            <h4 class="footer-heading" data-i18n="footer.navigation">NAVIGATION</h4>
+            <ul class="footer-links">
+              <li class="footer-link-item">
+                <a href="index.html#about" class="footer-link" data-i18n="footer.about">About Us</a>
+              </li>
+              <li class="footer-link-item">
+                <a href="index.html#classes" class="footer-link" data-i18n="nav.classes">Classes</a>
+              </li>
+              <li class="footer-link-item">
+                <a href="index.html#trainers" class="footer-link" data-i18n="nav.trainers">Trainers</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      
+      <div class="footer-bottom">
+        <p class="footer-copyright" data-i18n="footer.rights">© 2024 Apex Fitness. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  
+  
+  <script src="js/main.js"></script>
+  
+  
+  <script src="js/payment.js"></script>
+
+  <script>
+    // Update profile header based on auth status
+    function updateProfileHeader() {
+      const token = getToken();
+      const loginLink = document.getElementById('loginLink');
+      const profileIconBtn = document.getElementById('profileIconBtn');
+      const profileDropdown = document.getElementById('profileDropdown');
+
+      if (token) {
+        // User is logged in
+        loginLink.style.display = 'none';
+        profileIconBtn.style.display = 'block';
+
+        profileIconBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          profileDropdown.style.display = profileDropdown.style.display === 'none' ? 'block' : 'none';
+        });
+
+        document.getElementById('logoutHeaderBtn').addEventListener('click', () => {
+          localStorage.clear();
+          window.location.href = 'login.html';
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+          if (!e.target.closest('#profileHeaderSection')) {
+            profileDropdown.style.display = 'none';
+          }
+        });
+      } else {
+        // User is not logged in
+        loginLink.style.display = 'block';
+        profileIconBtn.style.display = 'none';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', updateProfileHeader);
+  </script>
+
+</body>
+</html>
