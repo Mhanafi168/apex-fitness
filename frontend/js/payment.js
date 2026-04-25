@@ -97,20 +97,20 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 
-function loadPlanData(planId) {
-  const plan = pricingPlans[planId];
-  
+function loadPlanData(planOrId) {
+  const plan = typeof planOrId === 'string' || typeof planOrId === 'number'
+    ? pricingPlans[planOrId]
+    : planOrId;
+
   if (!plan) {
-    console.error('Plan not found');
+    console.error('Plan not found', planOrId);
     return;
   }
 
-  
   document.getElementById('summaryPlanName').textContent = plan.name;
   document.getElementById('summaryDuration').textContent = plan.duration;
-  document.getElementById('summaryPrice').textContent = `$${plan.price.toFixed(2)}`;
+  document.getElementById('summaryPrice').textContent = `$${Number(plan.price).toFixed(2)}`;
 
-  
   const featuresContainer = document.getElementById('summaryFeatures');
   featuresContainer.innerHTML = '';
   plan.features.forEach(feature => {
@@ -123,8 +123,7 @@ function loadPlanData(planId) {
     featuresContainer.appendChild(featureEl);
   });
 
-  
-  window.selectedPlan = { id: planId, ...plan };
+  window.selectedPlan = plan;
 }
 
 

@@ -258,7 +258,7 @@
                     </div>
 
                     <div class="action-buttons">
-                        <a href="payment.html" class="btn-primary-custom">
+                        <a id="primaryActionBtn" href="payment.html" class="btn-primary-custom">
                             <i class="bi bi-credit-card"></i> Upgrade Plan
                         </a>
                         <button id="logoutBtnMain" class="btn-logout">
@@ -288,36 +288,63 @@
             profileDropdownHeader.style.display = 'block';
 
             try {
-                // Fetch user profile
-                const userData = await apiFetch('/api/members/profile');
-                
-                if (userData && !userData.error) {
-                    // Update profile info
-                    document.getElementById('userName').textContent = userData.fullName || 'User';
-                    document.getElementById('userEmail').textContent = userData.email || '-';
-                    document.getElementById('userRole').textContent = (userData.role || 'MEMBER').toUpperCase();
-                    document.getElementById('userType').textContent = userData.membershipType || 'Standard';
-                    
-                    if (userData.joinedDate) {
-                        const date = new Date(userData.joinedDate);
-                        document.getElementById('joinDate').textContent = date.toLocaleDateString('en-US', { 
-                            year: 'numeric', 
-                            month: 'long', 
-                            day: 'numeric' 
-                        });
+                    // Fetch generic user profile from auth service
+                    const userData = await apiFetch('/api/auth/me');
+
+                    if (userData && !userData.error) {
+                        const role = (userData.role || getRole() || 'MEMBER').toUpperCase();
+                        document.getElementById('userName').textContent = userData.fullName || userData.username || 'User';
+                        document.getElementById('userEmail').textContent = userData.email || '-';
+                        document.getElementById('userRole').textContent = role;
+                        document.getElementById('userType').textContent = role === 'MEMBER'
+                            ? (userData.membershipType || 'Standard')
+                            : role === 'TRAINER'
+                                ? 'Trainer'
+                                : 'Administrator';
+
+                        const actionBtn = document.getElementById('primaryActionBtn');
+                        const membershipBadge = document.getElementById('membershipStatus');
+
+                        if (role === 'MEMBER') {
+                            membershipBadge.textContent = userData.membershipType
+                                ? `${userData.membershipType} Member`
+                                : 'Active Member';
+                            actionBtn.textContent = 'Upgrade Plan';
+                            actionBtn.href = 'payment.html';
+                            actionBtn.style.display = 'inline-flex';
+                        } else if (role === 'TRAINER') {
+                            membershipBadge.textContent = 'Trainer Access';
+                            actionBtn.textContent = 'View Classes';
+                            actionBtn.href = 'schedule.html';
+                            actionBtn.style.display = 'inline-flex';
+                        } else {
+                            membershipBadge.textContent = 'Admin Access';
+                            actionBtn.textContent = 'Manage Users';
+                            actionBtn.href = 'index.html';
+                            actionBtn.style.display = 'inline-flex';
+                        }
+
+                        if (userData.joinedDate) {
+                            const date = new Date(userData.joinedDate);
+                            document.getElementById('joinDate').textContent = date.toLocaleDateString('en-US', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric'
+                            });
+                        } else {
+                            document.getElementById('joinDate').textContent = '-';
+                        }
+
+                        loadingSpinner.style.display = 'none';
+                        profileContent.style.display = 'block';
+                    } else {
+                        throw new Error('Failed to load profile');
                     }
-
+                } catch (error) {
+                    console.error('Profile load error:', error);
                     loadingSpinner.style.display = 'none';
-                    profileContent.style.display = 'block';
-                } else {
-                    throw new Error('Failed to load profile');
+                    notLoggedIn.style.display = 'block';
                 }
-            } catch (error) {
-                console.error('Profile load error:', error);
-                loadingSpinner.style.display = 'none';
-                notLoggedIn.style.display = 'block';
-            }
-
             // Setup logout buttons
             const setupLogout = () => {
                 localStorage.clear();
