@@ -14,6 +14,9 @@ public class PaymentRequest {
     private String memberName;
     private String memberEmail;
 
+    private Long planId;
+    private String planName;
+
     @NotNull(message = "Amount is required")
     @DecimalMin(value = "0.01", message = "Amount must be greater than 0")
     private BigDecimal amount;

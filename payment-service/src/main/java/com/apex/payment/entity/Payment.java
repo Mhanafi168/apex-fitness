@@ -19,6 +19,9 @@ public class Payment {
 
     private String memberName;
     private String memberEmail;
+    
+    private Long planId;
+    private String planName;
 
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal amount;

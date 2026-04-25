@@ -5,6 +5,7 @@
 
 const pricingPlans = {
   basic: {
+    id: 1,
     name: 'BASIC',
     price: 49.99,
     duration: '1 Month',
@@ -15,6 +16,7 @@ const pricingPlans = {
     ]
   },
   plus: {
+    id: 2,
     name: 'PLUS',
     price: 99.99,
     duration: '1 Month',
@@ -26,6 +28,7 @@ const pricingPlans = {
     ]
   },
   vip: {
+    id: 3,
     name: 'VIP',
     price: 199.99,
     duration: '1 Month',
@@ -85,6 +88,43 @@ async function getPlanFromURL() {
   return pricingPlans[slug] || pricingPlans.basic;
 }
 
+async function prefillCustomerForm() {
+  try {
+    const token = getToken();
+    if (!token) {
+      // User not logged in, redirect to login
+      window.location.href = 'login.html';
+      return;
+    }
+
+    const userResponse = await apiFetch('/api/auth/me');
+    if (!userResponse || userResponse.error) {
+      alert('Failed to load user information. Please log in again.');
+      window.location.href = 'login.html';
+      return;
+    }
+
+    // Pre-fill form with auth user data
+    const customerNameInput = document.getElementById('customerName');
+    const customerEmailInput = document.getElementById('customerEmail');
+
+    if (userResponse.fullName) {
+      customerNameInput.value = userResponse.fullName;
+    }
+
+    if (userResponse.email) {
+      customerEmailInput.value = userResponse.email;
+      // Email should match auth email, so make it read-only or show as verified
+      customerEmailInput.setAttribute('readonly', 'readonly');
+      customerEmailInput.setAttribute('title', 'Email verified from your account');
+      customerEmailInput.style.backgroundColor = '#f0f0f0';
+      customerEmailInput.style.cursor = 'not-allowed';
+    }
+  } catch (error) {
+    console.error('Failed to pre-fill customer form:', error);
+  }
+}
+
 
 document.addEventListener('DOMContentLoaded', async () => {
   const selectedPlan = await getPlanFromURL();
@@ -94,6 +134,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   setupFormHandlers();
   setupLanguageSwitcher();
   applyTranslations(document.documentElement.lang || 'en');
+  
+  // Pre-fill customer form with auth user data
+  await prefillCustomerForm();
 });
 
 
@@ -313,7 +356,7 @@ function validatePaymentMethod() {
 }
 
 
-function handlePaymentCompletion() {
+async function handlePaymentCompletion() {
   if (!validateCustomerInfo()) {
     return;
   }
@@ -322,22 +365,73 @@ function handlePaymentCompletion() {
     return;
   }
 
-  
-  const paymentData = collectPaymentData();
+  const completeBtn = document.getElementById('completeBtn');
+  const originalText = completeBtn.textContent;
+  completeBtn.disabled = true;
+  completeBtn.textContent = 'Processing...';
 
-  
-  console.log('Payment Data:', paymentData);
+  try {
+    // Get current user info for verification
+    const userResponse = await apiFetch('/api/auth/me');
+    if (!userResponse || userResponse.error) {
+      alert('Failed to get user information. Please log in again.');
+      window.location.href = 'login.html';
+      return;
+    }
 
-  
-  showSuccessModal();
+    const userId = userResponse.id || userResponse.userId;
+    
+    // Get form data entered by customer
+    const formCustomerName = document.getElementById('customerName').value.trim();
+    const formCustomerEmail = document.getElementById('customerEmail').value.trim();
 
-  
-  
-  
-  
-  
-  
-  
+    // Verify email matches logged-in user's email
+    if (formCustomerEmail.toLowerCase() !== userResponse.email.toLowerCase()) {
+      alert('Payment email must match your account email (' + userResponse.email + ')');
+      completeBtn.disabled = false;
+      completeBtn.textContent = originalText;
+      return;
+    }
+
+    const paymentData = collectPaymentData();
+    const plan = window.selectedPlan;
+
+    // Build backend payment request using FORM data, not auth data
+    const backendPayment = {
+      memberId: userId,
+      memberName: formCustomerName,
+      memberEmail: formCustomerEmail,
+      amount: plan.price || 0,
+      currency: 'USD',
+      paymentType: 'MEMBERSHIP',
+      planId: plan.id || null,
+      planName: plan.name || 'BASIC',
+      description: `${plan.name} membership payment - ${paymentData.paymentMethod}`
+    };
+
+    console.log('Submitting payment:', backendPayment);
+
+    // Send payment to backend
+    const result = await apiFetch('/api/payments', {
+      method: 'POST',
+      body: JSON.stringify(backendPayment)
+    });
+
+    if (result && result.id) {
+      console.log('Payment successful:', result);
+      showSuccessModal();
+    } else if (result && result.error) {
+      alert('Payment submission failed: ' + result.error);
+    } else {
+      alert('Payment submitted but received unexpected response');
+    }
+  } catch (error) {
+    console.error('Payment error:', error);
+    alert('Payment submission failed: ' + error.message);
+  } finally {
+    completeBtn.disabled = false;
+    completeBtn.textContent = originalText;
+  }
 }
 
 
