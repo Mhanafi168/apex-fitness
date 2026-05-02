@@ -57,8 +57,8 @@
             })
         });
         if (data && data.accessToken) {
-            localStorage.setItem('token', data.accessToken);
-            window.location.href = 'index.html';
+            saveAuth(data.accessToken, 'MEMBER', document.getElementById('email').value);
+            redirectByRole('MEMBER');
         } else {
             const msg = (data && (data.error || data.message)) || 'Registration failed';
             alert(msg + (data && data.status ? ' (' + data.status + ')' : ''));

@@ -105,6 +105,14 @@ public class AuthService {
         userRepository.save(user);
     }
 
+    @Transactional
+    public void activateUser(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("User not found: " + id));
+        user.setActive(true);
+        userRepository.save(user);
+    }
+
     private UserResponse toResponse(User u) {
         return UserResponse.builder()
                 .id(u.getId())

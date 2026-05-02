@@ -349,7 +349,7 @@ function setupCTAButtons() {
   const handleJoin = () => {
     showNotification('Redirecting to enrollment...');
     setTimeout(() => {
-      window.location.href = 'schedule.html';
+      window.location.href = 'index.html#classes';
     }, 1000);
   };
 

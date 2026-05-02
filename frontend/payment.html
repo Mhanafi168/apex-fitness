@@ -55,11 +55,10 @@
         <div class="d-none d-md-flex align-items-center gap-4">
           <a href="index.html#about" class="nav-link" data-i18n="nav.about">About</a>
           <a href="index.html#pricing" class="nav-link" data-i18n="nav.pricing">Pricing</a>
-          <a href="gallery.html" class="nav-link" data-i18n="nav.gallery">Gallery</a>
+          <a href="index.html#gallery" class="nav-link" data-i18n="nav.gallery">Gallery</a>
           <a href="index.html#classes" class="nav-link" data-i18n="nav.classes">Classes</a>
           <a href="index.html#trainers" class="nav-link" data-i18n="nav.trainers">Trainers</a>
           <a href="index.html#contact" class="nav-link" data-i18n="nav.contact">Contact</a>
-          <a href="schedule.html" class="nav-link" data-i18n="nav.schedule">Schedule</a>
           
           
           <div class="lang-dropdown">
@@ -475,7 +474,7 @@
         });
 
         document.getElementById('logoutHeaderBtn').addEventListener('click', () => {
-          localStorage.clear();
+          clearAuth();
           window.location.href = 'login.html';
         });
 

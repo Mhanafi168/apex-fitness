@@ -1,3 +1,9 @@
 {
-    "java.compile.nullAnalysis.mode": "automatic"
+    "java.compile.nullAnalysis.mode": "automatic",
+    "chat.tools.terminal.autoApprove": {
+        "/^node -e \"require\\('fs'\\); const content = require\\('fs'\\)\\.readFileSync\\('m:\\\\\\\\projects\\\\\\\\apex-fitness-clean\\\\\\\\frontend\\\\\\\\js\\\\\\\\dashboard\\.js', 'utf8'\\); new Function\\(content\\); console\\.log\\('✓ Syntax valid'\\)\" 2>&1 ; echo \"Syntax validation completed\"$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
+    }
 }

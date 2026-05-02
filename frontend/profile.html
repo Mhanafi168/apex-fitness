@@ -137,6 +137,108 @@
             margin-top: 10px;
         }
 
+        .dashboard-sections {
+            display: grid;
+            gap: 24px;
+            margin-top: 32px;
+        }
+
+        .dashboard-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.18);
+            color: white;
+        }
+
+        .dashboard-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .dashboard-card-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .dashboard-card-title i {
+            font-size: 1.4rem;
+            color: #ff3b3b;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 999px;
+            padding: 6px 12px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+        }
+
+        .status-badge.success { background: #0f9d58; color: white; }
+        .status-badge.info { background: #1e88e5; color: white; }
+        .status-badge.warning { background: #fbbc04; color: black; }
+        .status-badge.danger { background: #d93025; color: white; }
+        .status-badge.primary { background: #5c6ac4; color: white; }
+        .status-badge.secondary { background: rgba(255,255,255,0.08); color: white; }
+
+        .table-dashboard {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+        }
+
+        .table-dashboard th,
+        .table-dashboard td {
+            padding: 14px 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            color: #e5e5e5;
+            text-align: left;
+        }
+
+        .table-dashboard th {
+            color: #c7c7c7;
+            font-size: 0.85rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .table-dashboard tbody tr:hover {
+            background: rgba(255,255,255,0.05);
+        }
+
+        .action-link {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.18);
+            color: white;
+            padding: 8px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .action-link:hover {
+            background: rgba(255,255,255,0.08);
+        }
+
+        .empty-state {
+            color: #b3b3b3;
+            padding: 20px 0;
+            font-size: 0.95rem;
+        }
+
         .loading-spinner {
             display: none;
             text-align: center;
@@ -266,6 +368,7 @@
                         </button>
                     </div>
                 </div>
+                <div id="dashboardSections" class="dashboard-sections" style="display:none;"></div>
             </div>
         </div>
     </div>
@@ -277,6 +380,7 @@
             const notLoggedIn = document.getElementById('notLoggedIn');
             const profileContent = document.getElementById('profileContent');
             const profileDropdownHeader = document.getElementById('profileDropdownHeader');
+            const dashboardSections = document.getElementById('dashboardSections');
 
             if (!token) {
                 loadingSpinner.style.display = 'none';
@@ -288,89 +392,357 @@
             profileDropdownHeader.style.display = 'block';
 
             try {
-                    // Fetch generic user profile from auth service
-                    const userData = await apiFetch('/api/auth/me');
-
-                    if (userData && !userData.error) {
-                        const role = (userData.role || getRole() || 'MEMBER').toUpperCase();
-                        document.getElementById('userName').textContent = userData.fullName || userData.username || 'User';
-                        document.getElementById('userEmail').textContent = userData.email || '-';
-                        document.getElementById('userRole').textContent = role;
-                        document.getElementById('userType').textContent = role === 'MEMBER'
-                            ? (userData.membershipType || 'Standard')
-                            : role === 'TRAINER'
-                                ? 'Trainer'
-                                : 'Administrator';
-
-                        const actionBtn = document.getElementById('primaryActionBtn');
-                        const membershipBadge = document.getElementById('membershipStatus');
-
-                        if (role === 'MEMBER') {
-                            membershipBadge.textContent = userData.membershipType
-                                ? `${userData.membershipType} Member`
-                                : 'Active Member';
-                            actionBtn.textContent = 'Upgrade Plan';
-                            actionBtn.href = 'payment.html';
-                            actionBtn.style.display = 'inline-flex';
-                        } else if (role === 'TRAINER') {
-                            membershipBadge.textContent = 'Trainer Access';
-                            actionBtn.textContent = 'View Classes';
-                            actionBtn.href = 'schedule.html';
-                            actionBtn.style.display = 'inline-flex';
-                        } else {
-                            membershipBadge.textContent = 'Admin Access';
-                            actionBtn.textContent = 'Manage Users';
-                            actionBtn.href = 'index.html';
-                            actionBtn.style.display = 'inline-flex';
-                        }
-
-                        if (userData.joinedDate) {
-                            const date = new Date(userData.joinedDate);
-                            document.getElementById('joinDate').textContent = date.toLocaleDateString('en-US', {
-                                year: 'numeric',
-                                month: 'long',
-                                day: 'numeric'
-                            });
-                        } else {
-                            document.getElementById('joinDate').textContent = '-';
-                        }
-
-                        loadingSpinner.style.display = 'none';
-                        profileContent.style.display = 'block';
-                    } else {
-                        throw new Error('Failed to load profile');
-                    }
-                } catch (error) {
-                    console.error('Profile load error:', error);
-                    loadingSpinner.style.display = 'none';
-                    notLoggedIn.style.display = 'block';
+                const userData = await apiFetch('/api/auth/me');
+                if (!userData || userData.error) {
+                    throw new Error('Failed to load profile');
                 }
-            // Setup logout buttons
+
+                const role = (userData.role || getRole() || 'MEMBER').toUpperCase();
+                const userName = userData.fullName || userData.username || 'User';
+
+                document.getElementById('userName').textContent = userName;
+                document.getElementById('userEmail').textContent = userData.email || '-';
+                document.getElementById('userRole').textContent = role;
+                document.getElementById('userType').textContent = role === 'MEMBER'
+                    ? (userData.membershipType || 'Standard')
+                    : role === 'TRAINER'
+                        ? 'Trainer'
+                        : 'Administrator';
+
+                const actionBtn = document.getElementById('primaryActionBtn');
+                const membershipBadge = document.getElementById('membershipStatus');
+
+                if (role === 'MEMBER') {
+                    membershipBadge.textContent = userData.membershipType
+                        ? `${userData.membershipType} Member`
+                        : 'Active Member';
+                    actionBtn.textContent = 'Upgrade Plan';
+                    actionBtn.href = 'payment.html';
+                } else if (role === 'TRAINER') {
+                    membershipBadge.textContent = 'Trainer Access';
+                    actionBtn.textContent = 'View Classes';
+                    actionBtn.href = 'index.html#classes';
+                } else {
+                    membershipBadge.textContent = 'Admin Access';
+                    actionBtn.textContent = 'Manage Users';
+                    actionBtn.href = 'index.html';
+                }
+
+                actionBtn.style.display = 'inline-flex';
+
+                if (userData.createdAt || userData.joinedDate) {
+                    const date = new Date(userData.createdAt || userData.joinedDate);
+                    document.getElementById('joinDate').textContent = date.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    });
+                } else {
+                    document.getElementById('joinDate').textContent = '-';
+                }
+
+                await renderDashboardSections(role, userData, dashboardSections);
+                loadingSpinner.style.display = 'none';
+                profileContent.style.display = 'block';
+            } catch (error) {
+                console.error('Profile load error:', error);
+                loadingSpinner.style.display = 'none';
+                notLoggedIn.style.display = 'block';
+            }
+
             const setupLogout = () => {
-                localStorage.clear();
+                clearAuth();
                 window.location.href = 'login.html';
             };
 
             document.getElementById('logoutBtn').addEventListener('click', setupLogout);
             document.getElementById('logoutBtnMain').addEventListener('click', setupLogout);
 
-            // Setup profile dropdown
             const profileBtn = document.querySelector('.profile-icon-btn');
             const profileDropdown = document.querySelector('.profile-dropdown-menu');
-            
             if (profileBtn) {
                 profileBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
                     profileDropdown.style.display = profileDropdown.style.display === 'none' ? 'block' : 'none';
                 });
             }
-
             document.addEventListener('click', () => {
                 if (profileDropdown) {
                     profileDropdown.style.display = 'none';
                 }
             });
         });
+
+        async function renderDashboardSections(role, userData, container) {
+            container.innerHTML = '';
+            container.style.display = 'grid';
+
+            if (role === 'ADMIN') {
+                container.appendChild(createSectionCard('Users Overview', 'bi-people-fill', await buildAdminUsersSection()));
+                return;
+            }
+
+            if (role === 'MEMBER') {
+                const member = await apiFetch(`/api/members/user/${userData.id}`);
+                container.appendChild(createSectionCard('Membership Info', 'bi-file-medical', buildMemberInfoSection(member)));
+                if (member && !member.error) {
+                    const payments = await apiFetch(`/api/payments/member/${member.id}`);
+                    container.appendChild(createSectionCard('Payment History', 'bi-wallet2', buildPaymentHistorySection(payments)));
+                } else {
+                    container.appendChild(createSectionCard('Payment History', 'bi-wallet2', createEmptyState('Membership data not found. Payment history is unavailable.')));
+                }
+                return;
+            }
+
+            if (role === 'TRAINER') {
+                const trainer = await apiFetch(`/api/trainers/user/${userData.id}`);
+                container.appendChild(createSectionCard('Trainer Profile', 'bi-person-badge', buildTrainerProfileSection(trainer)));
+                if (trainer && !trainer.error) {
+                    const classes = await apiFetch(`/api/trainers/${trainer.id}/classes`);
+                    container.appendChild(createSectionCard('Assigned Classes', 'bi-calendar-check', buildAssignedClassesSection(classes)));
+                } else {
+                    container.appendChild(createSectionCard('Assigned Classes', 'bi-calendar-check', createEmptyState('Trainer profile missing. Unable to load assigned classes.')));
+                }
+                return;
+            }
+
+            container.appendChild(createSectionCard('Dashboard', 'bi-speedometer2', createEmptyState('No dashboard sections available for your role.')));
+        }
+
+        async function buildAdminUsersSection() {
+            const section = document.createElement('div');
+            const users = await apiFetch('/api/auth/admin/users');
+            if (!users || users.error) {
+                section.appendChild(createEmptyState('Unable to load users overview.')); 
+                return section;
+            }
+
+            if (!Array.isArray(users) || users.length === 0) {
+                section.appendChild(createEmptyState('No users found in auth database.'));
+                return section;
+            }
+
+            const table = document.createElement('table');
+            table.className = 'table-dashboard';
+            table.innerHTML = `
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${users.map(user => `
+                        <tr>
+                            <td>${escapeHtml(user.id)}</td>
+                            <td>${escapeHtml(user.username)}</td>
+                            <td>${escapeHtml(user.email)}</td>
+                            <td>${escapeHtml(user.role)}</td>
+                            <td>${createBadgeHtml(user.active ? 'Active' : 'Inactive', user.active ? 'success' : 'danger')}</td>
+                            <td>
+                                <button class="action-link admin-user-action" data-user-id="${user.id}" data-user-active="${user.active || false}">
+                                    ${user.active ? 'Deactivate' : 'Activate'}
+                                </button>
+                            </td>
+                        </tr>
+                    `).join('')}
+                </tbody>`;
+
+            section.appendChild(table);
+            section.addEventListener('click', async (event) => {
+                const button = event.target.closest('.admin-user-action');
+                if (!button) return;
+                const userId = button.getAttribute('data-user-id');
+                const isActive = button.getAttribute('data-user-active') === 'true';
+                const endpoint = `/api/auth/admin/users/${userId}/${isActive ? 'deactivate' : 'activate'}`;
+                button.disabled = true;
+                button.textContent = isActive ? 'Deactivating...' : 'Activating...';
+                const result = await apiFetch(endpoint, { method: 'PUT' });
+                button.disabled = false;
+                if (result && result.error) {
+                    alert('Unable to update user status.');
+                    return;
+                }
+                const refreshedSection = await buildAdminUsersSection();
+                section.innerHTML = '';
+                section.append(...refreshedSection.childNodes);
+            });
+
+            return section;
+        }
+
+        function buildMemberInfoSection(member) {
+            if (!member || member.error) {
+                return createEmptyState('Could not retrieve membership information.');
+            }
+            const content = document.createElement('div');
+            content.innerHTML = `
+                <div class="detail-item">
+                    <span class="detail-label">Full Name</span>
+                    <span class="detail-value">${escapeHtml(member.fullName || '-')}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Email</span>
+                    <span class="detail-value">${escapeHtml(member.email || '-')}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Membership Type</span>
+                    <span class="detail-value">${escapeHtml(member.membershipType || 'Standard')}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Status</span>
+                    <span class="detail-value">${createBadgeHtml(member.status || 'UNKNOWN', getBadgeClass(member.status))}</span>
+                </div>
+            `;
+            return content;
+        }
+
+        function buildPaymentHistorySection(payments) {
+            if (!payments || payments.error) {
+                return createEmptyState('Could not retrieve payment history.');
+            }
+            if (!Array.isArray(payments) || payments.length === 0) {
+                return createEmptyState('No payment records found.');
+            }
+
+            const section = document.createElement('div');
+            const table = document.createElement('table');
+            table.className = 'table-dashboard';
+            table.innerHTML = `
+                <thead>
+                    <tr>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Reference</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${payments.map(payment => `
+                        <tr>
+                            <td>${escapeHtml(formatCurrency(payment.amount, payment.currency))}</td>
+                            <td>${createBadgeHtml(payment.status || 'UNKNOWN', getBadgeClass(payment.status))}</td>
+                            <td>${escapeHtml(payment.transactionReference || '-')}</td>
+                            <td>${escapeHtml(formatDate(payment.paidAt || payment.createdAt) || '-')}</td>
+                        </tr>
+                    `).join('')}
+                </tbody>`;
+            section.appendChild(table);
+            return section;
+        }
+
+        function buildTrainerProfileSection(trainer) {
+            if (!trainer || trainer.error) {
+                return createEmptyState('Could not retrieve trainer details.');
+            }
+            const content = document.createElement('div');
+            content.innerHTML = `
+                <div class="detail-item">
+                    <span class="detail-label">Full Name</span>
+                    <span class="detail-value">${escapeHtml(trainer.fullName || '-')}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Specialization</span>
+                    <span class="detail-value">${escapeHtml(trainer.specialization || 'General Fitness')}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Email</span>
+                    <span class="detail-value">${escapeHtml(trainer.email || '-')}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Status</span>
+                    <span class="detail-value">${createBadgeHtml(trainer.status || 'UNKNOWN', getBadgeClass(trainer.status))}</span>
+                </div>
+            `;
+            return content;
+        }
+
+        function buildAssignedClassesSection(classes) {
+            if (!classes || classes.error) {
+                return createEmptyState('Could not retrieve assigned classes.');
+            }
+            if (!Array.isArray(classes) || classes.length === 0) {
+                return createEmptyState('No assigned classes found.');
+            }
+            const section = document.createElement('div');
+            const table = document.createElement('table');
+            table.className = 'table-dashboard';
+            table.innerHTML = `
+                <thead>
+                    <tr>
+                        <th>Class</th>
+                        <th>Location</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${classes.map(gymClass => `
+                        <tr>
+                            <td>${escapeHtml(gymClass.name || '-')}</td>
+                            <td>${escapeHtml(gymClass.location || '-')}</td>
+                            <td>${escapeHtml(formatDate(gymClass.classDateTime) || '-')}</td>
+                            <td>${createBadgeHtml(gymClass.status || 'UNKNOWN', getBadgeClass(gymClass.status))}</td>
+                        </tr>
+                    `).join('')}
+                </tbody>`;
+            section.appendChild(table);
+            return section;
+        }
+
+        function createSectionCard(title, icon, contentNode) {
+            const card = document.createElement('div');
+            card.className = 'dashboard-card';
+            const header = document.createElement('div');
+            header.className = 'dashboard-card-header';
+            const titleEl = document.createElement('div');
+            titleEl.className = 'dashboard-card-title';
+            titleEl.innerHTML = `<i class="bi ${icon}"></i><span>${escapeHtml(title)}</span>`;
+            header.appendChild(titleEl);
+            card.appendChild(header);
+            card.appendChild(contentNode);
+            return card;
+        }
+
+        function createEmptyState(message) {
+            const empty = document.createElement('div');
+            empty.className = 'empty-state';
+            empty.textContent = message;
+            return empty;
+        }
+
+        function formatCurrency(amount, currency) {
+            if (amount == null) return '-';
+            const value = typeof amount === 'object' && amount.toString ? amount.toString() : amount;
+            const formatted = parseFloat(value).toFixed(2);
+            return `${currency || 'USD'} ${formatted}`;
+        }
+
+        function formatDate(value) {
+            if (!value) return '';
+            const date = new Date(value);
+            if (Number.isNaN(date.getTime())) return '';
+            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        }
+
+        function getBadgeClass(status) {
+            if (!status) return 'secondary';
+            const normalized = status.toString().toUpperCase();
+            if (['ACTIVE', 'COMPLETED'].includes(normalized)) return 'success';
+            if (['PENDING', 'SCHEDULED', 'IN_PROGRESS'].includes(normalized)) return 'warning';
+            if (['FAILED', 'INACTIVE', 'CANCELLED', 'SUSPENDED'].includes(normalized)) return 'danger';
+            if (['ADMIN', 'TRAINER', 'MEMBER'].includes(normalized)) return 'primary';
+            return 'secondary';
+        }
+
+        function createBadgeHtml(text, variant) {
+            const safeText = escapeHtml(text || 'Unknown');
+            return `<span class="status-badge ${escapeHtml(variant || 'secondary')}">${safeText}</span>`;
+        }
     </script>
 </body>
 </html>

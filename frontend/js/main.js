@@ -16,26 +16,10 @@ const translations = {
     'nav.gallery': 'Gallery',
     'nav.pricing': 'Pricing',
     'nav.contact': 'Contact',
-    'nav.schedule': 'Schedule',
-    'nav.notification': 'Notifications',
     'nav.backHome': '← BACK HOME',
     'nav.navigation': 'NAVIGATION',
     
     
-    'notif.title': 'Notifications',
-    'notif.markAllRead': 'Mark all as read',
-    'notif.clearAll': 'Clear all',
-    'notif.noNotifications': 'No notifications yet',
-    'notif.checkBackLater': 'Check back later for updates',
-    'notif.classReminder': 'Class Reminder',
-    'notif.newClass': 'New Class Available',
-    'notif.trainerUpdate': 'Trainer Update',
-    'notif.promotionAlert': 'Special Promotion',
-    'notif.membershipExpiring': 'Membership Expiring Soon',
-    'notif.now': 'now',
-    'notif.minutesAgo': 'minutes ago',
-    'notif.hoursAgo': 'hours ago',
-    'notif.daysAgo': 'days ago',
     'nav.followUs': 'FOLLOW US',
     
     
@@ -234,26 +218,10 @@ const translations = {
     'nav.gallery': 'الصور',
     'nav.pricing': 'الأسعار',
     'nav.contact': 'اتصل بنا',
-    'nav.schedule': 'الجدول',
-    'nav.notification': 'التنبيهات',
     'nav.backHome': '← العودة للرئيسية',
     'nav.navigation': 'التنقل',
     
     
-    'notif.title': 'التنبيهات',
-    'notif.markAllRead': 'علم الكل كمقروء',
-    'notif.clearAll': 'حذف الكل',
-    'notif.noNotifications': 'لا توجد تنبيهات حتى الآن',
-    'notif.checkBackLater': 'تحقق لاحقا للتحديثات',
-    'notif.classReminder': 'تذكير الفصل',
-    'notif.newClass': 'فصل جديد متاح',
-    'notif.trainerUpdate': 'تحديث المدرب',
-    'notif.promotionAlert': 'عرض خاص',
-    'notif.membershipExpiring': 'انتهاء العضوية قريبا',
-    'notif.now': 'الآن',
-    'notif.minutesAgo': 'منذ دقائق',
-    'notif.hoursAgo': 'منذ ساعات',
-    'notif.daysAgo': 'منذ أيام',
     'nav.followUs': 'تابعنا',
     
     
@@ -672,39 +640,6 @@ function initScrollReveal() {
 
 
 
-function initWelcomeModal() {
-  const welcomeModal = document.getElementById('welcomeModal');
-  const closeWelcome = document.getElementById('closeWelcome');
-  const skipWelcome = document.getElementById('skipWelcome');
-
-  
-  if (welcomeModal) {
-    
-    setTimeout(() => {
-      welcomeModal.classList.add('active');
-      document.body.style.overflow = 'hidden';
-    }, 1000);
-  }
-
-  const hideWelcome = () => {
-    if (welcomeModal) {
-      welcomeModal.classList.remove('active');
-      document.body.style.overflow = '';
-      
-    }
-  };
-
-  if (closeWelcome) closeWelcome.addEventListener('click', hideWelcome);
-  if (skipWelcome) skipWelcome.addEventListener('click', hideWelcome);
-  
-  
-  const welcomeBg = document.querySelector('.welcome-bg');
-  if (welcomeBg) welcomeBg.addEventListener('click', hideWelcome);
-}
-
-
-
-
 function initHeroParallax() {
   const heroBg = document.querySelector('.hero-bg');
   if (!heroBg) return;
@@ -729,7 +664,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initLanguageSwitcher();
   initSmoothScroll();
   initScrollReveal();
-  initWelcomeModal();
   
   
   const yearElement = document.getElementById('currentYear');
@@ -740,6 +674,8 @@ document.addEventListener('DOMContentLoaded', () => {
   console.log('Apex initialized successfully!');
 
   initPublicCatalog().catch((err) => console.warn('Public catalog:', err));
+  initAuthNav();
+  initJoinNowButtons();
 });
 
 
@@ -748,383 +684,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-const notificationsData = [
-  {
-    id: 1,
-    type: 'classReminder',
-    title: 'Your HIIT Class Starts Soon!',
-    message: 'Your HIIT Training class with Olivia starts in 30 minutes at 7:30 AM',
-    icon: 'bi-lightning-charge',
-    category: 'warning',
-    time: 0,
-    read: false
-  },
-  {
-    id: 2,
-    type: 'newClass',
-    title: 'New Yoga Class Available',
-    message: 'A new advanced yoga class has been added to the schedule. Join Emily\'s evening session!',
-    icon: 'bi-star',
-    category: 'info',
-    time: 15,
-    read: false
-  },
-  {
-    id: 3,
-    type: 'promotionAlert',
-    title: 'Limited Time Offer - 30% Off!',
-    message: 'Get 30% discount on annual membership this week only. Upgrade your fitness journey today!',
-    icon: 'bi-gift',
-    category: 'success',
-    time: 120,
-    read: false
-  }
-];
-
-class NotificationSystem {
-  constructor() {
-    this.notifications = [...notificationsData];
-    this.init();
-  }
-
-  init() {
-    this.setupEventListeners();
-    this.renderNotifications();
-    this.renderMobileNotifications();
-    this.updateBadge();
-  }
-
-  setupEventListeners() {
-    const bell = document.getElementById('notificationBell');
-    const panel = document.getElementById('notificationPanel');
-    const closeBtn = document.getElementById('notificationClose');
-    const markAllRead = document.getElementById('markAllRead');
-    const clearAll = document.getElementById('clearAll');
-
-    
-    if (bell) {
-      bell.addEventListener('click', () => this.togglePanel());
-    }
-
-    if (closeBtn) {
-      closeBtn.addEventListener('click', () => this.closePanel());
-    }
-
-    if (markAllRead) {
-      markAllRead.addEventListener('click', () => this.markAllAsRead());
-    }
-
-    if (clearAll) {
-      clearAll.addEventListener('click', () => this.clearAllNotifications());
-    }
-
-    
-    document.addEventListener('click', (e) => {
-      if (panel && !panel.contains(e.target) && bell && !bell.contains(e.target)) {
-        this.closePanel();
-      }
-    });
-
-    
-    const mobileBell = document.getElementById('mobileNotificationBell');
-    const mobilePanel = document.getElementById('mobileNotificationPanel');
-    const mobileCloseBtn = document.getElementById('mobileNotificationClose');
-    const mobileMarkAllRead = document.getElementById('mobileMarkAllRead');
-    const mobileClearAll = document.getElementById('mobileClearAll');
-    const mobileOverlay = document.getElementById('mobileNotifOverlay');
-
-    if (mobileBell) {
-      mobileBell.addEventListener('click', (e) => {
-        e.stopPropagation();
-        this.toggleMobilePanel();
-      });
-    }
-
-    if (mobileCloseBtn) {
-      mobileCloseBtn.addEventListener('click', () => this.closeMobilePanel());
-    }
-
-    if (mobileMarkAllRead) {
-      mobileMarkAllRead.addEventListener('click', () => this.markAllAsRead());
-    }
-
-    if (mobileClearAll) {
-      mobileClearAll.addEventListener('click', () => this.clearAllNotifications());
-    }
-
-    if (mobileOverlay) {
-      mobileOverlay.addEventListener('click', () => this.closeMobilePanel());
-    }
-  }
-
-  togglePanel() {
-    const panel = document.getElementById('notificationPanel');
-    if (panel) {
-      panel.classList.toggle('active');
-    }
-  }
-
-  closePanel() {
-    const panel = document.getElementById('notificationPanel');
-    if (panel) {
-      panel.classList.remove('active');
-    }
-  }
-
-  toggleMobilePanel() {
-    const panel = document.getElementById('mobileNotificationPanel');
-    const overlay = document.getElementById('mobileNotifOverlay');
-    if (panel) {
-      const isActive = panel.classList.contains('active');
-      if (isActive) {
-        this.closeMobilePanel();
-      } else {
-        panel.classList.add('active');
-        if (overlay) overlay.classList.add('active');
-      }
-    }
-  }
-
-  closeMobilePanel() {
-    const panel = document.getElementById('mobileNotificationPanel');
-    const overlay = document.getElementById('mobileNotifOverlay');
-    if (panel) panel.classList.remove('active');
-    if (overlay) overlay.classList.remove('active');
-  }
-
-  renderNotifications() {
-    const list = document.getElementById('notificationList');
-    if (!list) return;
-
-    if (this.notifications.length === 0) {
-      list.innerHTML = `
-        <div class="notification-empty">
-          <div class="notification-empty-icon">🔔</div>
-          <div class="notification-empty-text">
-            <p data-i18n="notif.noNotifications">No notifications yet</p>
-            <small data-i18n="notif.checkBackLater">Check back later for updates</small>
-          </div>
-        </div>
-      `;
-      updateTranslations();
-      return;
-    }
-
-    list.innerHTML = this.notifications.map(notif => this.createNotificationItem(notif)).join('');
-    updateTranslations();
-  }
-
-  createNotificationItem(notif) {
-    const timeText = this.getTimeText(notif.time);
-    const categoryClass = notif.category || 'info';
-    const unreadClass = notif.read ? '' : 'unread';
-
-    return `
-      <div class="notification-item ${unreadClass}" data-id="${notif.id}">
-        <div class="notification-icon-wrapper ${categoryClass}">
-          <i class="bi ${notif.icon}"></i>
-        </div>
-        <div class="notification-content">
-          <div class="notification-title">${notif.title}</div>
-          <div class="notification-message">${notif.message}</div>
-          <div class="notification-time">${timeText}</div>
-        </div>
-        <div class="notification-action">
-          <button class="notification-btn" onclick="notificationSystem.markAsRead(${notif.id})">✓</button>
-        </div>
-      </div>
-    `;
-  }
-
-  getTimeText(minutesAgo) {
-    if (minutesAgo === 0) return t('notif.now');
-    if (minutesAgo < 60) return `${minutesAgo} ${t('notif.minutesAgo')}`;
-    if (minutesAgo < 1440) {
-      const hours = Math.floor(minutesAgo / 60);
-      return `${hours} ${t('notif.hoursAgo')}`;
-    }
-    const days = Math.floor(minutesAgo / 1440);
-    return `${days} ${t('notif.daysAgo')}`;
-  }
-
-  markAsRead(id) {
-    const notif = this.notifications.find(n => n.id === id);
-    if (notif) {
-      notif.read = true;
-      this.renderNotifications();
-      this.renderMobileNotifications();
-      this.updateBadge();
-    }
-  }
-
-  markAllAsRead() {
-    this.notifications.forEach(notif => notif.read = true);
-    this.renderNotifications();
-    this.renderMobileNotifications();
-    this.updateBadge();
-  }
-
-  clearAllNotifications() {
-    this.notifications = [];
-    this.renderNotifications();
-    this.renderMobileNotifications();
-    this.updateBadge();
-  }
-
-  updateBadge() {
-    const unreadCount = this.notifications.filter(n => !n.read).length;
-
-    
-    const badge = document.getElementById('notificationBadge');
-    if (badge) {
-      if (unreadCount === 0) {
-        badge.style.display = 'none';
-      } else {
-        badge.style.display = 'flex';
-        badge.textContent = '';
-      }
-    }
-
-    
-    const mobileBadge = document.getElementById('mobileNotificationBadge');
-    if (mobileBadge) {
-      if (unreadCount === 0) {
-        mobileBadge.style.display = 'none';
-      } else {
-        mobileBadge.style.display = 'flex';
-        mobileBadge.textContent = '';
-      }
-    }
-  }
-
-  addNotification(notification) {
-    const newNotif = {
-      id: Math.max(...this.notifications.map(n => n.id), 0) + 1,
-      read: false,
-      time: 0,
-      category: 'info',
-      ...notification
-    };
-
-    this.notifications.unshift(newNotif);
-    this.renderNotifications();
-    this.renderMobileNotifications();
-    this.updateBadge();
-    this.showToast(newNotif);
-  }
-
-  renderMobileNotifications() {
-    
-    const mobilePanelList = document.getElementById('notificationListMobilePanel');
-    if (mobilePanelList) {
-      if (this.notifications.length === 0) {
-        mobilePanelList.innerHTML = `
-          <div class="notification-empty">
-            <div class="notification-empty-icon">🔔</div>
-            <div class="notification-empty-text">
-              <p data-i18n="notif.noNotifications">No notifications yet</p>
-              <small data-i18n="notif.checkBackLater">Check back later for updates</small>
-            </div>
-          </div>
-        `;
-      } else {
-        mobilePanelList.innerHTML = this.notifications.map(notif => this.createNotificationItem(notif)).join('');
-      }
-    }
-
-    
-    const mobileList = document.getElementById('notificationListMobile');
-    if (mobileList) {
-      if (this.notifications.length === 0) {
-        mobileList.innerHTML = `
-          <div class="notification-empty-mobile" data-i18n="notif.noNotifications">No notifications yet</div>
-        `;
-      } else {
-        mobileList.innerHTML = this.notifications.map(notif => this.createMobileNotificationItem(notif)).join('');
-      }
-    }
-
-    updateTranslations();
-  }
-
-  createMobileNotificationItem(notif) {
-    const timeText = this.getTimeText(notif.time);
-    const unreadClass = notif.read ? '' : 'unread';
-
-    return `
-      <div class="notification-item-mobile ${unreadClass}" data-id="${notif.id}">
-        <div class="notification-icon-mobile">
-          <i class="bi ${notif.icon}"></i>
-        </div>
-        <div class="notification-content-mobile">
-          <div class="notification-title-mobile">${notif.title}</div>
-          <div class="notification-message-mobile">${notif.message}</div>
-          <div class="notification-time-mobile">${timeText}</div>
-        </div>
-      </div>
-    `;
-  }
-
-  showToast(notification) {
-    const toast = document.createElement('div');
-    toast.className = 'notification-toast';
-    toast.innerHTML = `
-      <strong>${notification.title}</strong>
-      <p style="margin: 4px 0 0 0; opacity: 0.8;">${notification.message}</p>
-    `;
-
-    document.body.appendChild(toast);
-
-    setTimeout(() => {
-      toast.classList.add('removing');
-      setTimeout(() => toast.remove(), 400);
-    }, 5000);
-  }
-}
-
-
-let notificationSystem;
-
-
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => {
-    notificationSystem = new NotificationSystem();
-  });
-} else {
-  notificationSystem = new NotificationSystem();
-}
-
-
-function simulateNewNotification() {
-  const sampleNotifications = [
-    {
-      type: 'classReminder',
-      title: 'Strength Class Starting!',
-      message: 'Your Strength Bootcamp class starts in 15 minutes',
-      icon: 'bi-dumbbell',
-      category: 'warning'
-    },
-    {
-      type: 'trainerUpdate',
-      title: 'Trainer Benjamin is Online',
-      message: 'Your favorite trainer is now available for personal training sessions',
-      icon: 'bi-person-check',
-      category: 'success'
-    },
-    {
-      type: 'membershipExpiring',
-      title: 'Membership Renewal Reminder',
-      message: 'Your membership expires in 7 days. Renew now to avoid interruption',
-      icon: 'bi-exclamation-triangle',
-      category: 'error'
-    }
-  ];
-
-  const randomNotif = sampleNotifications[Math.floor(Math.random() * sampleNotifications.length)];
-  if (notificationSystem) {
-    notificationSystem.addNotification(randomNotif);
-  }
-}
 
 
 
@@ -1157,11 +716,145 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Call this on every page that needs auth
 function getToken() {
-  return localStorage.getItem('token');
+  return localStorage.getItem('apex_token') || localStorage.getItem('token');
 }
 
 function getRole() {
-  return localStorage.getItem('role');
+  return localStorage.getItem('apex_role') || localStorage.getItem('role');
+}
+
+function getUsername() {
+  return localStorage.getItem('apex_username') || localStorage.getItem('username');
+}
+
+function saveAuth(token, role, username) {
+  if (token) {
+    localStorage.setItem('apex_token', token);
+  }
+  if (role) {
+    localStorage.setItem('apex_role', role.toUpperCase());
+  }
+  if (username) {
+    localStorage.setItem('apex_username', username);
+  }
+  localStorage.removeItem('token');
+  localStorage.removeItem('role');
+  localStorage.removeItem('username');
+}
+
+function clearAuth() {
+  localStorage.removeItem('apex_token');
+  localStorage.removeItem('apex_role');
+  localStorage.removeItem('apex_username');
+  localStorage.removeItem('token');
+  localStorage.removeItem('role');
+  localStorage.removeItem('username');
+}
+
+function isLoggedIn() {
+  return Boolean(getToken());
+}
+
+function redirectByRole(role) {
+  const normalized = (role || '').toUpperCase();
+  if (normalized === 'ADMIN') {
+    window.location.href = 'admin-dashboard.html';
+    return;
+  }
+  if (normalized === 'TRAINER') {
+    window.location.href = 'trainer-dashboard.html';
+    return;
+  }
+  if (normalized === 'MEMBER') {
+    window.location.href = 'index.html';
+    return;
+  }
+  window.location.href = 'index.html';
+}
+
+function requireRole(expectedRole) {
+  const token = getToken();
+  const currentRole = (getRole() || '').toUpperCase();
+  if (!token || currentRole !== (expectedRole || '').toUpperCase()) {
+    clearAuth();
+    window.location.href = 'login.html';
+    return false;
+  }
+  return true;
+}
+
+function initAuthNav() {
+  const isAuthed = isLoggedIn();
+  const loginLink = document.getElementById('loginLink');
+  const profileIconBtn = document.getElementById('profileIconBtn');
+  const profileDropdown = document.getElementById('profileDropdown');
+  const profileDropdownHeader = document.getElementById('profileDropdownHeader');
+  const logoutHeaderBtn = document.getElementById('logoutHeaderBtn');
+  const logoutBtn = document.getElementById('logoutBtn');
+  const logoutBtnMain = document.getElementById('logoutBtnMain');
+  const profileUsername = document.getElementById('navUsername');
+
+  if (loginLink) {
+    loginLink.style.display = isAuthed ? 'none' : '';
+  }
+  if (profileIconBtn) {
+    profileIconBtn.style.display = isAuthed ? '' : 'none';
+  }
+  if (profileDropdownHeader) {
+    profileDropdownHeader.style.display = isAuthed ? 'block' : 'none';
+  }
+  if (profileUsername) {
+    const username = getUsername();
+    profileUsername.textContent = username ? username : 'Profile';
+  }
+
+  const setLogoutHandler = (button) => {
+    if (!button) return;
+    button.style.display = isAuthed ? '' : 'none';
+    button.addEventListener('click', () => {
+      clearAuth();
+      window.location.href = 'login.html';
+    });
+  };
+
+  setLogoutHandler(logoutHeaderBtn);
+  setLogoutHandler(logoutBtn);
+  setLogoutHandler(logoutBtnMain);
+
+  if (profileIconBtn) {
+    profileIconBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (!isAuthed) {
+        window.location.href = 'login.html';
+        return;
+      }
+      if (profileDropdown) {
+        profileDropdown.style.display = profileDropdown.style.display === 'block' ? 'none' : 'block';
+      }
+    });
+  }
+
+  if (profileDropdown) {
+    document.addEventListener('click', (event) => {
+      if (!profileDropdown.contains(event.target) && event.target !== profileIconBtn) {
+        profileDropdown.style.display = 'none';
+      }
+    });
+  }
+}
+
+function initJoinNowButtons() {
+  document.querySelectorAll('.join-now-action').forEach((element) => {
+    element.addEventListener('click', (event) => {
+      const url = element.getAttribute('href') || 'login.html';
+      event.preventDefault();
+      if (isLoggedIn()) {
+        redirectByRole(getRole());
+      } else {
+        window.location.href = url;
+      }
+    });
+  });
 }
 
 const API = 'http://localhost:8080';
@@ -1180,7 +873,7 @@ async function apiFetch(url, options = {}) {
     headers
   });
   if (res.status === 401) {
-    localStorage.clear();
+    clearAuth();
     window.location.href = 'login.html';
     return;
   }

@@ -71,9 +71,8 @@
             })
         });
         if (data && data.accessToken) {
-            localStorage.setItem('token', data.accessToken);
-            localStorage.setItem('role', data.role);
-            window.location.href = 'index.html';
+            saveAuth(data.accessToken, data.role, data.username || document.getElementById('username').value);
+            redirectByRole(data.role);
         } else {
             alert('Invalid username or password');
         }

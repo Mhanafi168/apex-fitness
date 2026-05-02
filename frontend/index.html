@@ -32,9 +32,8 @@
         })
       });
       if (data && data.accessToken) {
-        localStorage.setItem('token', data.accessToken);
-        localStorage.setItem('role', data.role);
-        window.location.href = 'index.html';
+        saveAuth(data.accessToken, data.role, data.username || document.getElementById('username')?.value);
+        redirectByRole(data.role);
       } else {
         alert('Login failed');
       }
@@ -58,40 +57,9 @@
         <div class="d-none d-md-flex align-items-center gap-4">
           <a href="#about" class="nav-link" data-i18n="nav.about">About</a>
           <a href="#pricing" class="nav-link" data-i18n="nav.pricing">Pricing</a>
-          <a href="gallery.html" class="nav-link" data-i18n="nav.gallery">Gallery</a>
           <a href="#classes" class="nav-link" data-i18n="nav.classes">Classes</a>
           <a href="#trainers" class="nav-link" data-i18n="nav.trainers">Trainers</a>
           <a href="#contact" class="nav-link" data-i18n="nav.contact">Contact</a>
-          <a href="schedule.html" class="nav-link" data-i18n="nav.schedule">Schedule</a>
-          
-          
-          <div class="notification-container">
-            <button id="notificationBell" class="notification-bell" title="Notifications">
-              <svg class="notification-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-              </svg>
-              <span class="notification-badge" id="notificationBadge">3</span>
-            </button>
-            
-            
-            <div class="notification-panel" id="notificationPanel">
-              <div class="notification-header">
-                <h3 data-i18n="notif.title">Notifications</h3>
-                <button class="notification-close" id="notificationClose">
-                  <i class="bi bi-x"></i>
-                </button>
-              </div>
-              
-              <div class="notification-list" id="notificationList">
-              </div>
-              
-              <div class="notification-footer">
-                <button class="notification-footer-btn" id="markAllRead" data-i18n="notif.markAllRead">Mark all as read</button>
-                <button class="notification-footer-btn" id="clearAll" data-i18n="notif.clearAll">Clear all</button>
-              </div>
-            </div>
-          </div>
           
           
           <div class="lang-dropdown">
@@ -134,17 +102,6 @@
             </div>
           </div>
 
-          
-          <div class="notification-container mobile-notification-container">
-            <button id="mobileNotificationBell" class="notification-bell" title="Notifications">
-              <svg class="notification-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-              </svg>
-              <span class="notification-badge" id="mobileNotificationBadge">3</span>
-            </button>
-          </div>
-
           <button id="mobileMenuBtn" class="btn text-white p-0 border-0">
             <i class="bi bi-list" style="font-size: 28px;"></i>
           </button>
@@ -153,44 +110,6 @@
     </div>
   </header>
 
-  
-  <div id="welcomeModal" class="welcome-modal">
-    <div class="welcome-bg"></div>
-    <div class="welcome-content">
-      <button id="closeWelcome" class="welcome-close">&times;</button>
-      <div class="welcome-inner">
-        <p class="welcome-label">FIRST TIME HERE?</p>
-        <h2 class="welcome-title">UNLEASH YOUR<br>POTENTIAL</h2>
-        <p class="welcome-desc">Join the elite community of Apex today and get exclusive access to our world-class facilities.</p>
-        <div class="welcome-actions">
-          <a href="signup.html" class="welcome-btn-primary">JOIN THE ELITE</a>
-          <button id="skipWelcome" class="welcome-btn-secondary">EXPLORE FIRST</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-
-  
-  <div id="mobileNotifOverlay" class="mobile-notif-overlay"></div>
-
-  
-  <div class="notification-panel mobile-notification-panel" id="mobileNotificationPanel">
-    <div class="notification-header">
-      <h3 data-i18n="notif.title">Notifications</h3>
-      <button class="notification-close" id="mobileNotificationClose">
-        <i class="bi bi-x"></i>
-      </button>
-    </div>
-    <div class="notification-list" id="notificationListMobilePanel">
-    </div>
-    <div class="notification-footer">
-      <button class="notification-footer-btn" id="mobileMarkAllRead" data-i18n="notif.markAllRead">Mark all as read</button>
-      <button class="notification-footer-btn" id="mobileClearAll" data-i18n="notif.clearAll">Clear all</button>
-    </div>
-  </div>
-
-  
   <div class="sticky-social-sidebar d-none d-lg-flex" id="socialSidebar">
     <a href="#" class="social-sidebar-link" title="Facebook">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -245,7 +164,6 @@
         <a href="#classes" class="mobile-nav-link text-white font-black text-decoration-none" style="font-size: 2rem; letter-spacing: -0.05em; font-style: italic;" data-i18n="nav.classes">Classes</a>
         <a href="#trainers" class="mobile-nav-link text-white font-black text-decoration-none" style="font-size: 2rem; letter-spacing: -0.05em; font-style: italic;" data-i18n="nav.trainers">Trainers</a>
         <a href="#contact" class="mobile-nav-link text-white font-black text-decoration-none" style="font-size: 2rem; letter-spacing: -0.05em; font-style: italic;" data-i18n="nav.contact">Contact</a>
-        <a href="schedule.html" class="mobile-nav-link text-white font-black text-decoration-none" style="font-size: 2rem; letter-spacing: -0.05em; font-style: italic;" data-i18n="nav.schedule">Schedule</a>
       </div>
     </div>
     
@@ -288,7 +206,7 @@
         </p>
         
         
-        <button class="btn-primary fade-in delay-200" data-i18n="hero.cta">JOIN NOW</button>
+        <a id="joinNowBtn" href="login.html" class="btn-primary join-now-action fade-in delay-200" data-i18n="hero.cta">JOIN NOW</a>
         
         
         <div class="stats-grid mt-5 pt-5">
@@ -384,44 +302,6 @@
       <div class="card-grid" id="classesGrid"></div>
     </div>
   </section>
-
-  
-  <section id="gallery" class="section legacy-section" style="background: #050505; overflow: hidden;">
-    <div class="container">
-      <div class="row align-items-center">
-        
-        <div class="col-lg-7 mb-5 mb-lg-0">
-          <div class="stacked-cards-container visible-on-scroll">
-            <div class="stacked-card card-1">
-              <img src="images/gallery-1.jpg" alt="Apex Legacy 1">
-            </div>
-            <div class="stacked-card card-2">
-              <img src="images/gallery-2.jpg" alt="Apex Legacy 2">
-            </div>
-            <div class="stacked-card card-3">
-              <img src="images/gallery-3.jpg" alt="Apex Legacy 3">
-            </div>
-          </div>
-        </div>
-        
-        
-        <div class="col-lg-5 ps-lg-5 visible-on-scroll">
-          <div class="legacy-content">
-            <p class="section-label text-accent mb-2" style="letter-spacing: 0.3em;">APEX LEGACY</p>
-            <h2 class="display-4 font-black text-white mb-4" style="font-family: 'Syncopate', sans-serif; line-height: 1.1;">ELITE <span class="text-accent">HERITAGE</span></h2>
-            <p class="text-white-50 mb-5 fs-5" style="line-height: 1.8;">
-              Since our inception, Apex has been the symbol of strength and transformation. From our first location to becoming a community of elite athletes, our mission remains the same: to help you become stronger, inside and out.
-            </p>
-            <a href="gallery.html" class="legacy-btn">
-              <span class="btn-text">EXPLORE GALLERY</span>
-              <span class="btn-icon">→</span>
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
   
   <section id="pricing" class="section" style="background: #050505;">
     <div class="container">
@@ -750,7 +630,7 @@
         });
 
         document.getElementById('logoutHeaderBtn').addEventListener('click', () => {
-          localStorage.clear();
+          clearAuth();
           window.location.href = 'login.html';
         });
 

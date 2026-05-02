@@ -58,4 +58,11 @@ public class AuthController {
         authService.deactivateUser(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PutMapping("/admin/users/{id}/activate")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> activateUser(@PathVariable Long id) {
+        authService.activateUser(id);
+        return ResponseEntity.noContent().build();
+    }
 }

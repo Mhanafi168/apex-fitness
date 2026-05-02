@@ -365,7 +365,7 @@ function setupCTAButtons() {
     btn.addEventListener('click', () => {
       showNotification('Redirecting to booking system...');
       setTimeout(() => {
-        window.location.href = 'schedule.html';
+        window.location.href = 'index.html#classes';
       }, 1000);
     });
   });
