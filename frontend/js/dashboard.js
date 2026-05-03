@@ -67,6 +67,13 @@ async function loadAdminDashboard() {
         <form id="createTrainerForm" class="dashboard-form">
           <div class="form-row">
             <div class="form-group">
+              <label>Select User</label>
+              <select id="trainerUserId" required>
+                <option value="">-- Select User --</option>
+                ${Array.isArray(users) ? users.map(u => `<option value="${u.id}" data-email="${escapeHtml(u.email || '')}">${escapeHtml(u.username)}</option>`).join('') : ''}
+              </select>
+            </div>
+            <div class="form-group">
               <label>Full Name</label>
               <input id="trainerName" type="text" placeholder="Enter trainer's full name" required>
             </div>
@@ -157,8 +164,11 @@ async function loadAdminDashboard() {
                     <td>${escapeHtml(trainer.specialization || 'General')}</td>
                     <td>${createStatusBadge(trainer.active ? 'Active' : 'Inactive')}</td>
                     <td>
-                      <button class="btn-dashboard btn-small ${trainer.active ? 'btn-danger-dashboard' : 'btn-success-dashboard'} admin-trainer-toggle" data-trainer-id="${trainer.id}" data-active="${trainer.active}">
+                      <button class="btn-dashboard btn-small ${trainer.active ? 'btn-warning-dashboard' : 'btn-success-dashboard'} admin-trainer-toggle" data-trainer-id="${trainer.id}" data-active="${trainer.active}" style="margin-right: 0.25rem;">
                         ${trainer.active ? '<i class="bi bi-lock"></i> Deactivate' : '<i class="bi bi-unlock"></i> Activate'}
+                      </button>
+                      <button class="btn-dashboard btn-small btn-danger-dashboard admin-trainer-delete" data-trainer-id="${trainer.id}">
+                        <i class="bi bi-trash"></i> Delete
                       </button>
                     </td>
                   </tr>
@@ -173,6 +183,17 @@ async function loadAdminDashboard() {
     container.innerHTML = html;
     status.textContent = '';
 
+    const userSelect = document.getElementById('trainerUserId');
+    if (userSelect) {
+      userSelect.addEventListener('change', (e) => {
+        const selectedOption = e.target.options[e.target.selectedIndex];
+        const emailInput = document.getElementById('trainerEmail');
+        if (emailInput && selectedOption) {
+          emailInput.value = selectedOption.dataset.email || '';
+        }
+      });
+    }
+
     // Form submission
     const form = document.getElementById('createTrainerForm');
     if (form) {
@@ -184,6 +205,7 @@ async function loadAdminDashboard() {
         btn.disabled = true;
 
         const payload = {
+          userId: Number(document.getElementById('trainerUserId').value),
           fullName: document.getElementById('trainerName').value,
           email: document.getElementById('trainerEmail').value,
           specialization: document.getElementById('trainerSpecialty').value
@@ -237,6 +259,30 @@ async function loadAdminDashboard() {
 
         const endpoint = `/api/trainers/${trainerId}/${isActive ? 'deactivate' : 'activate'}`;
         const result = await apiFetch(endpoint, { method: 'PUT' });
+
+        button.classList.remove('btn-loading');
+        if (result && result.error) {
+          alert('✗ Failed: ' + result.error);
+          button.disabled = false;
+        } else {
+          loadAdminDashboard();
+        }
+      });
+    });
+
+    // Trainer delete handlers
+    container.querySelectorAll('.admin-trainer-delete').forEach((button) => {
+      button.addEventListener('click', async () => {
+        if (!confirm('Are you sure you want to delete this trainer? This will also delete all classes assigned to this trainer.')) {
+          return;
+        }
+        
+        const trainerId = button.dataset.trainerId;
+        button.disabled = true;
+        button.classList.add('btn-loading');
+
+        const endpoint = `/api/trainers/${trainerId}`;
+        const result = await apiFetch(endpoint, { method: 'DELETE' });
 
         button.classList.remove('btn-loading');
         if (result && result.error) {

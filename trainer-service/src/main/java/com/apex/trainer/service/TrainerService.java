@@ -62,6 +62,15 @@ public class TrainerService {
         return trainerRepository.save(trainer);
     }
 
+    @Transactional
+    public void deleteTrainer(Long id) {
+        if (!trainerRepository.existsById(id)) {
+            throw new IllegalArgumentException("Trainer not found: " + id);
+        }
+        gymClassRepository.findByTrainerId(id).forEach(c -> gymClassRepository.delete(c));
+        trainerRepository.deleteById(id);
+    }
+
     // ── Class Management ──────────────────────────────────────────────────────
 
     @Transactional

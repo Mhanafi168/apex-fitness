@@ -84,6 +84,13 @@ public class TrainerController {
         return ResponseEntity.ok(TrainerResponse.from(trainerService.updateStatus(id, status)));
     }
 
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> deleteTrainer(@PathVariable Long id) {
+        trainerService.deleteTrainer(id);
+        return ResponseEntity.noContent().build();
+    }
+
     // ── Class endpoints ───────────────────────────────────────────────────────
 
     @PostMapping("/classes")
