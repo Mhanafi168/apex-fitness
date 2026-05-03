@@ -836,7 +836,7 @@ function initAuthNav() {
 
   if (profileDropdown) {
     document.addEventListener('click', (event) => {
-      if (!profileDropdown.contains(event.target) && event.target !== profileIconBtn) {
+      if (!profileDropdown.contains(event.target) && (!profileIconBtn || !profileIconBtn.contains(event.target))) {
         profileDropdown.style.display = 'none';
       }
     });
