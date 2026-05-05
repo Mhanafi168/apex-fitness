@@ -964,7 +964,7 @@ async function initPublicCatalog() {
         card.style.animationDelay = `${i * 0.06}s`;
         const name = escapeHtml(t.fullName || 'Trainer');
         const spec = escapeHtml(t.specialization || 'Coach');
-        const id = Number(t.id);
+        const id = encodeURIComponent(t.id);
         card.innerHTML = `
           <a href="trainer-profile.html?id=${id}" class="text-decoration-none">
             <div class="card-image-wrapper">
@@ -1004,7 +1004,7 @@ async function initPublicCatalog() {
         const title = escapeHtml(c.name || 'Class');
         const level = escapeHtml(c.classType || 'All levels');
         const when = escapeHtml(formatClassWhen(c.classDateTime));
-        const id = Number(c.id);
+        const id = encodeURIComponent(c.id);
         card.innerHTML = `
           <a href="class-details.html?id=${id}" class="text-decoration-none">
             <div class="card-image-wrapper">

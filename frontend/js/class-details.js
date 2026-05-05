@@ -194,13 +194,13 @@ function sentencesFromDescription(text) {
 
 async function loadClassData() {
   const rawId = getClassIdFromURL();
-  const numericId = parseInt(rawId, 10);
-  if (!Number.isFinite(numericId)) {
-    console.error('Use a numeric class id (from the schedule or homepage).');
+  const classId = rawId && rawId.trim();
+  if (!classId) {
+    console.error('Class id is required in the URL.');
     return;
   }
 
-  const c = await apiFetchPublic('/api/trainers/classes/' + numericId);
+  const c = await apiFetchPublic('/api/trainers/classes/' + encodeURIComponent(classId));
   if (!c || c.error || c.id == null) {
     console.error('Class not found');
     return;
@@ -224,15 +224,21 @@ async function loadClassData() {
 
   const trainerName = c.trainerName || 'Our team';
   const trainerId = c.trainerId;
+
+  // Fetch trainer data if available
+  let trainerData = null;
+  if (trainerId != null && trainerId !== '') {
+    trainerData = await apiFetchPublic('/api/trainers/' + encodeURIComponent(trainerId));
+  }
+
   document.getElementById('trainerImage').src = APEX_FALLBACK_IMG;
   document.getElementById('trainerImage').alt = trainerName;
   document.getElementById('trainerName').textContent = trainerName;
-  document.getElementById('trainerSpecialty').textContent = 'Coach';
-  document.getElementById('trainerBio').textContent =
-    'Your coach will guide you through this session — check the class description for focus and intensity.';
+  document.getElementById('trainerSpecialty').textContent = trainerData?.specialization || 'Coach';
+  document.getElementById('trainerBio').textContent = trainerData?.bio || 'Your coach will guide you through this session — check the class description for focus and intensity.';
   document.getElementById('trainerRating').textContent = '—';
-  document.getElementById('trainerClients').textContent = '—';
-  document.getElementById('trainerCerts').textContent = '—';
+  document.getElementById('trainerClients').textContent = trainerData?.phoneNumber || '—';
+  document.getElementById('trainerCerts').textContent = trainerData?.status || '—';
 
   const tid = trainerId != null ? Number(trainerId) : null;
   const trainerHref =
@@ -440,18 +446,18 @@ function setupLanguageSwitcher() {
       document.documentElement.lang = lang;
       document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
 
-      
+
       document.querySelectorAll('.lang-option').forEach(opt => {
         opt.classList.remove('active');
       });
       option.classList.add('active');
 
-      
+
       document.querySelectorAll('.lang-btn').forEach(btn => {
         btn.textContent = lang === 'ar' ? 'AR' : 'EN';
       });
 
-      
+
       applyTranslations(lang);
     });
   });

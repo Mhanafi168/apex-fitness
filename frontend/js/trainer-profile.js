@@ -188,13 +188,25 @@ const APEX_FALLBACK_IMG = 'images/hero-apex-coming-soon.jpg';
 
 async function loadTrainerData() {
   const rawId = getTrainerIdFromURL();
-  const numericId = parseInt(rawId, 10);
-  if (!Number.isFinite(numericId)) {
-    console.error('Use a numeric trainer id (from the directory).');
-    return;
+  let trainer;
+
+  if (rawId) {
+    trainer = await apiFetchPublic('/api/trainers/' + encodeURIComponent(rawId));
+  } else {
+    // No id provided, try to load current trainer if logged in
+    if (!isLoggedIn()) {
+      console.error('No trainer id provided and user not logged in.');
+      window.location.href = 'login.html';
+      return;
+    }
+    const user = await apiFetch('/api/auth/me');
+    if (!user || user.error) {
+      console.error('Failed to get current user.');
+      return;
+    }
+    trainer = await apiFetch(`/api/trainers/user/${user.id}`);
   }
 
-  const trainer = await apiFetchPublic('/api/trainers/' + numericId);
   if (!trainer || trainer.error || trainer.id == null) {
     console.error('Trainer not found');
     return;
@@ -202,7 +214,7 @@ async function loadTrainerData() {
 
   const imageLink = document.getElementById('trainerImageLink');
   if (imageLink) {
-    imageLink.href = `trainer-profile.html?id=${numericId}`;
+    imageLink.href = `trainer-profile.html?id=${trainer.id}`;
   }
 
   document.getElementById('trainerImage').src = APEX_FALLBACK_IMG;
@@ -293,13 +305,13 @@ function setupReviewForm() {
   reviewForm.addEventListener('submit', (e) => {
     e.preventDefault();
 
-    
+
     const formData = new FormData(reviewForm);
     const name = formData.get('name') || 'Anonymous';
     const rating = formData.get('rating') || 5;
     const review = formData.get('review') || '';
 
-    
+
     const reviewCard = document.createElement('div');
     reviewCard.className = 'review-card';
     reviewCard.style.animation = 'fadeInUp 0.6s ease-out';
@@ -319,14 +331,14 @@ function setupReviewForm() {
       <span class="review-date">Just now</span>
     `;
 
-    
+
     const reviewsGrid = document.querySelector('.reviews-grid');
     reviewsGrid.insertBefore(reviewCard, reviewsGrid.firstChild);
 
-    
+
     reviewForm.reset();
 
-    
+
     showNotification('Review submitted successfully!');
   });
 }
@@ -428,18 +440,18 @@ function setupLanguageSwitcher() {
       document.documentElement.lang = lang;
       document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
 
-      
+
       document.querySelectorAll('.lang-option').forEach(opt => {
         opt.classList.remove('active');
       });
       option.classList.add('active');
 
-      
+
       document.querySelectorAll('.lang-btn').forEach(btn => {
         btn.textContent = lang === 'ar' ? 'AR' : 'EN';
       });
 
-      
+
       applyTranslations(lang);
     });
   });
