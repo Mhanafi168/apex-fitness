@@ -198,7 +198,21 @@
   color: rgba(255, 255, 255, 0.6);
 }
 
-.stat-item span {
+.stat-item-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.stat-caption {
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.stat-item span:not(.stat-caption) {
   font-size: 1rem;
   font-weight: 600;
   color: rgba(255, 255, 255, 0.9);
@@ -433,10 +447,25 @@
   color: rgba(255, 255, 255, 0.6);
 }
 
-.highlight-item span {
+.highlight-item-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.highlight-caption {
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.highlight-item-text span:not(.highlight-caption) {
   font-size: 0.95rem;
   font-weight: 600;
   color: rgba(255, 255, 255, 0.9);
+  word-break: break-word;
 }
 
 .trainer-profile-btn {

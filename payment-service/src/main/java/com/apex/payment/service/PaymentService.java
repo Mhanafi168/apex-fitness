@@ -9,7 +9,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -70,6 +72,21 @@ public class PaymentService {
     public BigDecimal getTotalRevenue() {
         BigDecimal total = paymentRepository.getTotalRevenue();
         return total != null ? total : BigDecimal.ZERO;
+    }
+
+    public BigDecimal getMonthlyRevenue() {
+        LocalDateTime since = LocalDateTime.now().minusMonths(1);
+        BigDecimal sum = paymentRepository.sumCompletedAmountSince(since);
+        return sum != null ? sum : BigDecimal.ZERO;
+    }
+
+    public Map<String, Object> getRevenueSummary() {
+        Map<String, Object> m = new LinkedHashMap<>();
+        m.put("totalRevenue", getTotalRevenue());
+        m.put("monthlyRevenue", getMonthlyRevenue());
+        m.put("activePlans", planRepository.countByActiveTrue());
+        m.put("currency", "USD");
+        return m;
     }
 
     public BigDecimal getMemberTotalSpend(Long memberId) {
@@ -158,5 +175,35 @@ public class PaymentService {
         PaymentMethod method = getPaymentMethodById(id);
         method.setIsActive(false);
         paymentMethodRepository.save(method);
+    }
+
+    // ── Class Booking Payment Validation ──────────────────────────────────────
+
+    /**
+     * Check if member has made a completed CLASS_BOOKING payment.
+     * This is used by member-service to validate payment before allowing class booking.
+     * @return true if member has at least one completed CLASS_BOOKING payment, false otherwise
+     */
+    public boolean hasMemberCompletedClassPayment(Long memberId) {
+        List<Payment> payments = paymentRepository.findByMemberId(memberId);
+        return payments.stream()
+                .anyMatch(p -> p.getPaymentType() == Payment.PaymentType.CLASS_BOOKING &&
+                        p.getStatus() == Payment.PaymentStatus.COMPLETED);
+    }
+
+    /**
+     * Get the timestamp of member's most recent completed CLASS_BOOKING payment.
+     * @return timestamp as milliseconds since epoch, or null if no payment found
+     */
+    public Long getLastClassPaymentTime(Long memberId) {
+        List<Payment> payments = paymentRepository.findByMemberId(memberId);
+        return payments.stream()
+                .filter(p -> p.getPaymentType() == Payment.PaymentType.CLASS_BOOKING &&
+                        p.getStatus() == Payment.PaymentStatus.COMPLETED)
+                .map(Payment::getPaidAt)
+                .filter(java.util.Objects::nonNull)
+                .max(java.time.LocalDateTime::compareTo)
+                .map(dt -> dt.atZone(java.time.ZoneId.systemDefault()).toInstant().toEpochMilli())
+                .orElse(null);
     }
 }

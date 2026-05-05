@@ -8,4 +8,6 @@ import java.util.List;
 @Repository
 public interface MembershipPlanRepository extends JpaRepository<MembershipPlan, Long> {
     List<MembershipPlan> findByActiveTrue();
+
+    long countByActiveTrue();
 }

@@ -67,12 +67,16 @@ public class JwtAuthFilter extends AbstractGatewayFilterFactory<JwtAuthFilter.Co
 
                 String username = claims.getSubject();
                 String role     = claims.get("role", String.class);
+                Object rawUserId = claims.get("userId");
 
-                // Forward user info as headers to downstream services
-                ServerHttpRequest mutatedRequest = request.mutate()
+                var builder = request.mutate()
                         .header("X-Auth-Username", username)
-                        .header("X-Auth-Role", role)
-                        .build();
+                        .header("X-Auth-Role", role);
+                if (rawUserId instanceof Number) {
+                    builder.header("X-Auth-User-Id", String.valueOf(((Number) rawUserId).longValue()));
+                }
+
+                ServerHttpRequest mutatedRequest = builder.build();
 
                 log.debug("[GATEWAY] Routing {} {} | user={} role={}",
                         request.getMethod(), request.getPath(), username, role);

@@ -3,10 +3,12 @@ package com.apex.member.controller;
 import com.apex.member.dto.*;
 import com.apex.member.entity.*;
 import com.apex.member.service.MemberService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -102,6 +104,22 @@ public class MemberController {
     public ResponseEntity<List<BookingResponse>> getMemberBookings(@PathVariable Long memberId) {
         return ResponseEntity.ok(
                 memberService.getBookingsByMember(memberId).stream()
+                        .map(BookingResponse::from)
+                        .collect(Collectors.toList()));
+    }
+
+    @GetMapping("/bookings/class/{classId}")
+    @PreAuthorize("hasAnyRole('ADMIN','TRAINER')")
+    public ResponseEntity<List<BookingResponse>> getBookingsForClass(
+            @PathVariable Long classId,
+            HttpServletRequest request,
+            Authentication authentication) {
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(a -> "ROLE_ADMIN".equals(a.getAuthority()));
+        Long jwtUserId = (Long) request.getAttribute("jwtUserId");
+        String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        return ResponseEntity.ok(
+                memberService.getBookingsForClass(classId, isAdmin, jwtUserId, authHeader).stream()
                         .map(BookingResponse::from)
                         .collect(Collectors.toList()));
     }

@@ -42,29 +42,6 @@
             h1 { font-size: 2.5rem; }
         }
     </style>
-    <script src="js/main.js"></script>
-    <script>
-    async function register() {
-        const email = document.getElementById('email').value;
-        const data = await apiFetch('/api/auth/register', {
-            method: 'POST',
-            body: JSON.stringify({
-                username: email,
-                email: email,
-                password: document.getElementById('password').value,
-                fullName: document.getElementById('fullName').value,
-                role: 'MEMBER'
-            })
-        });
-        if (data && data.accessToken) {
-            saveAuth(data.accessToken, 'MEMBER', document.getElementById('email').value);
-            redirectByRole('MEMBER');
-        } else {
-            const msg = (data && (data.error || data.message)) || 'Registration failed';
-            alert(msg + (data && data.status ? ' (' + data.status + ')' : ''));
-        }
-    }
-    </script>
 </head>
 <body>
     <div class="main-grid">
@@ -81,13 +58,19 @@
                 <span class="brand-mark">APEX.</span>
                 <h1>START YOUR<br>EVOLUTION</h1>
                 <p class="subtitle">Create your unique identity in the zone.</p>
-                <form onsubmit="event.preventDefault(); register()">
+                <div id="error-msg" style="color:#ff4444;margin-bottom:8px;"></div>
+                <div id="success-msg" style="color:#22c55e;margin-bottom:8px;"></div>
+                <form>
                     <div class="input-group-v2">
                         <label>Full Name</label>
                         <input id="fullName" type="text" placeholder="CITIZEN NAME" required>
                     </div>
                     <div class="input-group-v2">
                         <label>Identity</label>
+                        <input id="username" type="email" placeholder="USERNAME@DOMAIN.COM" required>
+                    </div>
+                    <div class="input-group-v2">
+                        <label>Email</label>
                         <input id="email" type="email" placeholder="EMAIL@DOMAIN.COM" required>
                     </div>
                     <div class="input-group-v2">
@@ -103,4 +86,5 @@
         </div>
     </div>
 </body>
+<script src="js/main.js"></script>
 </html>

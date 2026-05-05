@@ -305,6 +305,14 @@
   line-height: 1;
 }
 
+.trainer-phone-value {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.35;
+  word-break: break-word;
+}
+
 .stat-label {
   font-size: 0.75rem;
   color: rgba(255, 255, 255, 0.6);

@@ -3,6 +3,10 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;500;600;700;800;900;1000&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+@import url('./dashboard.css');
+@import url('./payment.css');
+@import url('./trainer-profile.css');
+@import url('./class-details.css');
 
 
 :root {
@@ -27,6 +31,32 @@
   
   
   --radius: 0rem;
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --btn-radius: 0.5rem;
+}
+
+.apex-notification {
+  position: fixed;
+  top: 80px;
+  right: 20px;
+  padding: 15px 25px;
+  border-radius: var(--btn-radius);
+  font-weight: 700;
+  z-index: 1000;
+  animation: slideInRight 0.3s ease-out;
+}
+
+.apex-notification--light {
+  background: #ffffff;
+  color: #000000;
+}
+
+.apex-notification--error {
+  background: var(--destructive);
+  color: #ffffff;
 }
 
 

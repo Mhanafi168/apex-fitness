@@ -120,6 +120,7 @@ services:
       SPRING_DATASOURCE_PASSWORD: root
       EUREKA_URI: http://eureka-server:8761/eureka
       CONFIG_URI: http://config-server:8888
+      APEX_TRAINER_SERVICE_BASE_URL: http://trainer-service:8083
 
   trainer-service:
     build: ./trainer-service

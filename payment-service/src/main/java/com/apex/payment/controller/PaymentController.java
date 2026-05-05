@@ -85,8 +85,8 @@ public class PaymentController {
 
     @GetMapping("/revenue")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Map<String, BigDecimal>> getTotalRevenue() {
-        return ResponseEntity.ok(Map.of("totalRevenue", paymentService.getTotalRevenue()));
+    public ResponseEntity<Map<String, Object>> getRevenueSummary() {
+        return ResponseEntity.ok(paymentService.getRevenueSummary());
     }
 
     @GetMapping("/revenue/member/{memberId}")
@@ -198,5 +198,32 @@ public class PaymentController {
     public ResponseEntity<Void> deactivatePaymentMethod(@PathVariable Long id) {
         paymentService.deactivatePaymentMethod(id);
         return ResponseEntity.noContent().build();
+    }
+
+    // ── Class Booking Payment Check endpoints ────────────────────────────────
+
+    /**
+     * Check if member has made a completed CLASS_BOOKING payment.
+     * Used by member-service to validate payment before allowing class booking.
+     */
+    @GetMapping("/member/{memberId}/has-class-payment")
+    @PreAuthorize("permitAll()")
+    public ResponseEntity<Map<String, Object>> hasClassPayment(@PathVariable Long memberId) {
+        boolean hasPayment = paymentService.hasMemberCompletedClassPayment(memberId);
+        return ResponseEntity.ok(Map.of("hasPayment", hasPayment, "memberId", memberId));
+    }
+
+    /**
+     * Get the timestamp of member's last completed CLASS_BOOKING payment.
+     * Used to check how recent the payment is.
+     */
+    @GetMapping("/member/{memberId}/last-class-payment-time")
+    @PreAuthorize("permitAll()")
+    public ResponseEntity<Map<String, Object>> getLastClassPaymentTime(@PathVariable Long memberId) {
+        Long timestamp = paymentService.getLastClassPaymentTime(memberId);
+        return ResponseEntity.ok(Map.of(
+                "timestamp", timestamp != null ? timestamp : 0L,
+                "memberId", memberId
+        ));
     }
 }

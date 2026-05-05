@@ -19,6 +19,9 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
     @Query("SELECT SUM(p.amount) FROM Payment p WHERE p.status = 'COMPLETED'")
     BigDecimal getTotalRevenue();
 
+    @Query("SELECT SUM(p.amount) FROM Payment p WHERE p.status = 'COMPLETED' AND COALESCE(p.paidAt, p.createdAt) >= :since")
+    BigDecimal sumCompletedAmountSince(LocalDateTime since);
+
     @Query("SELECT SUM(p.amount) FROM Payment p WHERE p.status = 'COMPLETED' AND p.memberId = :memberId")
     BigDecimal getTotalRevenueByMember(Long memberId);
 }

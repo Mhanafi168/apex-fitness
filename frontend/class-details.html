@@ -20,7 +20,6 @@
   
   
   <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/class-details.css">
   <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -98,11 +97,11 @@
           <div class="class-image-wrapper">
             <a href="#" id="classImageLink" class="class-image-link">
               <div class="class-image-container">
-                <img id="classImage" src="images/class-hiit.jpg" alt="Class" class="class-image">
+                <img id="classImage" src="" alt="Class" class="class-image">
                 <div class="class-image-overlay"></div>
                 <div class="class-badge" id="classBadge">
                   <i class="bi bi-lightning-charge"></i>
-                  <span id="classLevel">Advanced</span>
+                  <span id="classLevel">Loading...</span>
                 </div>
               </div>
             </a>
@@ -110,30 +109,39 @@
           
           <div class="class-hero-info">
             <div class="class-header-content">
-              <p class="class-category" id="classCategory">High Intensity</p>
-              <h1 class="class-name" id="className">HIIT Training</h1>
+              <p class="class-category" id="classCategory">Loading...</p>
+              <h1 class="class-name" id="className">Loading class details...</h1>
               
+              <p class="class-session-meta text-secondary small mb-3" id="classSessionMeta"></p>
+
               <div class="class-stats">
                 <div class="stat-item">
                   <i class="bi bi-clock"></i>
-                  <span id="classDuration">45 Min</span>
+                  <div class="stat-item-text">
+                    <span class="stat-caption">Duration</span>
+                    <span id="classDuration">—</span>
+                  </div>
                 </div>
                 <div class="stat-item">
-                  <i class="bi bi-fire"></i>
-                  <span id="classCalories">450-550</span>
+                  <i class="bi bi-flag"></i>
+                  <div class="stat-item-text">
+                    <span class="stat-caption">Status</span>
+                    <span id="classStatus">—</span>
+                  </div>
                 </div>
                 <div class="stat-item">
                   <i class="bi bi-people"></i>
-                  <span id="classCapacity">20 People</span>
+                  <div class="stat-item-text">
+                    <span class="stat-caption">Enrollment</span>
+                    <span id="classCapacity">—</span>
+                  </div>
                 </div>
               </div>
               
-              <p class="class-description" id="classDescription">
-                Intense interval training combining cardio and strength exercises for maximum calorie burn.
-              </p>
+              <p class="class-description" id="classDescription">Loading class description...</p>
               
               <div class="class-actions">
-                <a href="login.html" class="btn-primary join-now-action" data-i18n="class.joinNow">JOIN NOW</a>
+                <button type="button" id="heroJoinNowBtn" class="btn-primary" data-i18n="class.joinNow">JOIN NOW</button>
                 <button class="btn-secondary" data-i18n="class.learnMore">LEARN MORE</button>
               </div>
             </div>
@@ -152,7 +160,7 @@
         <div class="trainer-spotlight">
           <div class="trainer-spotlight-image">
             <a href="#" id="trainerLink" class="trainer-link">
-              <img id="trainerImage" src="images/trainer-matthew.jpg" alt="Trainer" class="trainer-img">
+              <img id="trainerImage" src="" alt="Trainer" class="trainer-img">
               <div class="trainer-overlay">
                 <span class="view-profile-badge" data-i18n="class.viewProfile">View Profile</span>
               </div>
@@ -160,24 +168,32 @@
           </div>
           
           <div class="trainer-spotlight-info">
-            <h3 id="trainerName" class="trainer-name">Matthew Johnson</h3>
-            <p id="trainerSpecialty" class="trainer-specialty">Strength Coach</p>
-            <p id="trainerBio" class="trainer-bio">
-              Dedicated fitness professional with 12+ years of experience in high-intensity training and performance coaching.
-            </p>
+            <h3 id="trainerName" class="trainer-name">Loading...</h3>
+            <p id="trainerSpecialty" class="trainer-specialty">Loading...</p>
+            <p id="trainerContactLine" class="trainer-contact small text-secondary mb-2"></p>
+            <p id="trainerBio" class="trainer-bio">Loading trainer bio...</p>
             
             <div class="trainer-highlights">
               <div class="highlight-item">
-                <i class="bi bi-star-fill"></i>
-                <span id="trainerRating">4.9/5</span>
+                <i class="bi bi-graph-up-arrow"></i>
+                <div class="highlight-item-text">
+                  <span class="highlight-caption">Years exp.</span>
+                  <span id="trainerHighlightExp">—</span>
+                </div>
               </div>
               <div class="highlight-item">
-                <i class="bi bi-people-fill"></i>
-                <span id="trainerClients">500+ Clients</span>
+                <i class="bi bi-telephone-fill"></i>
+                <div class="highlight-item-text">
+                  <span class="highlight-caption">Phone</span>
+                  <span id="trainerHighlightPhone">—</span>
+                </div>
               </div>
               <div class="highlight-item">
-                <i class="bi bi-award-fill"></i>
-                <span id="trainerCerts">4 Certifications</span>
+                <i class="bi bi-envelope-fill"></i>
+                <div class="highlight-item-text">
+                  <span class="highlight-caption">Email</span>
+                  <span id="trainerHighlightEmail">—</span>
+                </div>
               </div>
             </div>
             
@@ -195,66 +211,17 @@
           <p class="section-subtitle" data-i18n="class.scheduleDesc">Pick a time that works for you</p>
         </div>
         
-        <div class="schedule-grid">
-          <div class="schedule-card visible-on-scroll">
-            <div class="schedule-day" data-i18n="class.monday">Monday</div>
-            <div class="schedule-times">
-              <div class="time-slot">
-                <span class="time">07:00 AM</span>
-                <span class="availability">Available</span>
-              </div>
-              <div class="time-slot">
-                <span class="time">06:00 PM</span>
-                <span class="availability">Available</span>
-              </div>
-            </div>
-            <button class="schedule-btn" data-i18n="class.enroll">ENROLL</button>
+        <div class="schedule-grid" id="classScheduleGrid"></div>
+
+        <!-- Payment Requirement Notice -->
+        <div style="background: #1a1a1a; border-left: 4px solid #ff4444; padding: 1.5rem; border-radius: 8px; margin-top: 2rem; text-align: center;">
+          <div style="display: flex; align-items: center; justify-content: center; gap: 1rem; margin-bottom: 0.5rem;">
+            <i class="bi bi-credit-card-2-front" style="font-size: 1.5rem; color: #ff4444;"></i>
+            <h4 style="margin: 0; color: #ffffff;">Payment Required to Book</h4>
           </div>
-          
-          <div class="schedule-card visible-on-scroll">
-            <div class="schedule-day" data-i18n="class.wednesday">Wednesday</div>
-            <div class="schedule-times">
-              <div class="time-slot">
-                <span class="time">09:00 AM</span>
-                <span class="availability">Available</span>
-              </div>
-              <div class="time-slot">
-                <span class="time">07:00 PM</span>
-                <span class="availability">Full</span>
-              </div>
-            </div>
-            <button class="schedule-btn" data-i18n="class.enroll">ENROLL</button>
-          </div>
-          
-          <div class="schedule-card visible-on-scroll">
-            <div class="schedule-day" data-i18n="class.friday">Friday</div>
-            <div class="schedule-times">
-              <div class="time-slot">
-                <span class="time">08:00 AM</span>
-                <span class="availability">Available</span>
-              </div>
-              <div class="time-slot">
-                <span class="time">05:00 PM</span>
-                <span class="availability">Available</span>
-              </div>
-            </div>
-            <button class="schedule-btn" data-i18n="class.enroll">ENROLL</button>
-          </div>
-          
-          <div class="schedule-card visible-on-scroll">
-            <div class="schedule-day" data-i18n="class.saturday">Saturday</div>
-            <div class="schedule-times">
-              <div class="time-slot">
-                <span class="time">10:00 AM</span>
-                <span class="availability">Available</span>
-              </div>
-              <div class="time-slot">
-                <span class="time">04:00 PM</span>
-                <span class="availability">Available</span>
-              </div>
-            </div>
-            <button class="schedule-btn" data-i18n="class.enroll">ENROLL</button>
-          </div>
+          <p style="color: #aaaaaa; margin: 0.5rem 0 0 0; font-size: 0.95rem;">
+            Members must complete a payment before booking a class. After payment, you'll be able to enroll in this class immediately.
+          </p>
         </div>
       </div>
     </section>
@@ -266,39 +233,10 @@
           <h2 class="section-title" data-i18n="class.benefits">WHAT YOU'LL GAIN</h2>
         </div>
         
-        <div class="benefits-grid">
-          <div class="benefit-card visible-on-scroll">
-            <div class="benefit-icon">
-              <i class="bi bi-heart-pulse"></i>
-            </div>
-            <h3 class="benefit-title" data-i18n="class.benefit1">Cardiovascular Strength</h3>
-            <p class="benefit-desc">Improve your heart health and endurance with intense interval training.</p>
-          </div>
-          
-          <div class="benefit-card visible-on-scroll">
-            <div class="benefit-icon">
-              <i class="bi bi-lightning-charge"></i>
-            </div>
-            <h3 class="benefit-title" data-i18n="class.benefit2">Maximum Calorie Burn</h3>
-            <p class="benefit-desc">Burn up to 550 calories in a single 45-minute session.</p>
-          </div>
-          
-          <div class="benefit-card visible-on-scroll">
-            <div class="benefit-icon">
-              <i class="bi bi-graph-up"></i>
-            </div>
-            <h3 class="benefit-title" data-i18n="class.benefit3">Metabolism Boost</h3>
-            <p class="benefit-desc">Experience the afterburn effect that lasts for hours post-workout.</p>
-          </div>
-          
-          <div class="benefit-card visible-on-scroll">
-            <div class="benefit-icon">
-              <i class="bi bi-person-check"></i>
-            </div>
-            <h3 class="benefit-title" data-i18n="class.benefit4">Full Body Workout</h3>
-            <p class="benefit-desc">Engage every muscle group in a comprehensive training session.</p>
-          </div>
-        </div>
+        <p class="text-secondary text-center small mb-4" id="classBenefitsIntro">
+          Pulled from this class description in the database (not fixed marketing copy).
+        </p>
+        <div class="benefits-grid" id="classBenefitsGrid"></div>
       </div>
     </section>
 
@@ -306,42 +244,11 @@
     <section class="class-section" style="background: #050505;">
       <div class="container">
         <div class="text-center mb-5">
-          <h2 class="section-title" data-i18n="class.equipment">EQUIPMENT NEEDED</h2>
+          <h2 class="section-title">RECORD DETAILS</h2>
+          <p class="section-subtitle text-secondary">Fields stored on <code>gym_classes</code> for this session</p>
         </div>
         
-        <div class="equipment-grid">
-          <div class="equipment-item visible-on-scroll">
-            <div class="equipment-icon">
-              <i class="bi bi-box"></i>
-            </div>
-            <h4 class="equipment-name" data-i18n="class.dumbbells">Dumbbells</h4>
-            <p class="equipment-desc">Various weights available</p>
-          </div>
-          
-          <div class="equipment-item visible-on-scroll">
-            <div class="equipment-icon">
-              <i class="bi bi-box"></i>
-            </div>
-            <h4 class="equipment-name" data-i18n="class.mat">Exercise Mat</h4>
-            <p class="equipment-desc">Provided by gym</p>
-          </div>
-          
-          <div class="equipment-item visible-on-scroll">
-            <div class="equipment-icon">
-              <i class="bi bi-box"></i>
-            </div>
-            <h4 class="equipment-name" data-i18n="class.resistance">Resistance Bands</h4>
-            <p class="equipment-desc">All resistance levels</p>
-          </div>
-          
-          <div class="equipment-item visible-on-scroll">
-            <div class="equipment-icon">
-              <i class="bi bi-box"></i>
-            </div>
-            <h4 class="equipment-name" data-i18n="class.water">Water Bottle</h4>
-            <p class="equipment-desc">Bring your own</p>
-          </div>
-        </div>
+        <div class="equipment-grid" id="classRecordGrid"></div>
       </div>
     </section>
 
@@ -352,7 +259,7 @@
           <h2 class="cta-title" data-i18n="class.ready">READY TO PUSH YOUR LIMITS?</h2>
           <p class="cta-subtitle" data-i18n="class.ctaDesc">Join our community and start your transformation today</p>
           <div class="cta-buttons">
-            <button class="btn-primary" data-i18n="class.joinNow">JOIN NOW</button>
+            <button type="button" id="ctaJoinNowBtn" class="btn-primary" data-i18n="class.joinNow">JOIN NOW</button>
             <button class="btn-secondary" data-i18n="class.contactUs">CONTACT US</button>
           </div>
         </div>
@@ -404,13 +311,6 @@
   </footer>
 
   
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-  
-  
-  <script src="js/main.js"></script>
-  
-  
-  <script src="js/class-details.js"></script>
-
 </body>
+<script src="js/main.js"></script>
 </html>

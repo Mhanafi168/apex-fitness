@@ -60,24 +60,6 @@
             h1 { font-size: 2.5rem; }
         }
     </style>
-    <script src="js/main.js"></script>
-    <script>
-    async function login() {
-        const data = await apiFetch('/api/auth/login', {
-            method: 'POST',
-            body: JSON.stringify({
-                username: document.getElementById('username').value,
-                password: document.getElementById('password').value
-            })
-        });
-        if (data && data.accessToken) {
-            saveAuth(data.accessToken, data.role, data.username || document.getElementById('username').value);
-            redirectByRole(data.role);
-        } else {
-            alert('Invalid username or password');
-        }
-    }
-    </script>
 </head>
 <body>
     <div class="main-grid">
@@ -94,7 +76,9 @@
                 <span class="brand-mark">APEX.</span>
                 <h1>ACCESS<br>STRENGTH</h1>
                 <p class="subtitle">Enter your credentials to enter the zone.</p>
-                <form onsubmit="event.preventDefault(); login()">
+                <div id="error-msg" style="color:#ff4444;margin-bottom:8px;"></div>
+                <div id="success-msg" style="color:#22c55e;margin-bottom:8px;"></div>
+                <form>
                     <div class="input-group-v2">
                         <label>Identity</label>
                         <input id="username" type="email" placeholder="EMAIL@DOMAIN.COM" required>
@@ -116,4 +100,5 @@
         </div>
     </div>
 </body>
+<script src="js/main.js"></script>
 </html>

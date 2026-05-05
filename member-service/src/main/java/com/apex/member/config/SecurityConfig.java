@@ -67,6 +67,12 @@ public class SecurityConfig {
 
                     String username = claims.getSubject();
                     String role     = claims.get("role", String.class);
+                    Long jwtUserId = null;
+                    Object rawUid = claims.get("userId");
+                    if (rawUid instanceof Number) {
+                        jwtUserId = ((Number) rawUid).longValue();
+                    }
+                    req.setAttribute("jwtUserId", jwtUserId);
 
                     if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                         var auth = new UsernamePasswordAuthenticationToken(
