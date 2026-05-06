@@ -59,6 +59,11 @@
   color: #ffffff;
 }
 
+/* Navbar username small label (reuses existing dropdown style) */
+#navUsername:empty {
+  display: none;
+}
+
 
 * {
   margin: 0;
