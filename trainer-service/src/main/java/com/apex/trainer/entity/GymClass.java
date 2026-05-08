@@ -13,10 +13,13 @@ public class GymClass {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 255)
     private String name;
 
+    @Column(columnDefinition = "TEXT")
     private String description;
+
+    @Column(length = 255)
     private String location;
 
     @Column(nullable = false)

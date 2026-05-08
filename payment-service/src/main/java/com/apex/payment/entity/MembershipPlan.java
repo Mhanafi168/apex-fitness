@@ -14,9 +14,10 @@ public class MembershipPlan {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true, length = 128)
     private String name;
 
+    @Column(columnDefinition = "TEXT")
     private String description;
 
     @Column(nullable = false, precision = 10, scale = 2)
@@ -24,7 +25,11 @@ public class MembershipPlan {
 
     private Integer durationDays;
     private Integer classesIncluded;
-    private Boolean personalTrainingIncluded;
+
+    @Builder.Default
+    private Boolean personalTrainingIncluded = false;
+
+    @Builder.Default
     private Boolean active = true;
 
     private LocalDateTime createdAt;

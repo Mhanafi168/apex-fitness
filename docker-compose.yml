@@ -13,6 +13,7 @@ services:
       - "3307:3306"
     volumes:
       - mysql_auth_data:/var/lib/mysql
+      - ./database/init/auth_db.sql:/docker-entrypoint-initdb.d/01-apex-schema.sql:ro
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 10s
@@ -28,6 +29,7 @@ services:
       - "3308:3306"
     volumes:
       - mysql_member_data:/var/lib/mysql
+      - ./database/init/member_db.sql:/docker-entrypoint-initdb.d/01-apex-schema.sql:ro
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 10s
@@ -43,6 +45,7 @@ services:
       - "3309:3306"
     volumes:
       - mysql_trainer_data:/var/lib/mysql
+      - ./database/init/trainer_db.sql:/docker-entrypoint-initdb.d/01-apex-schema.sql:ro
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 10s
@@ -58,6 +61,7 @@ services:
       - "3310:3306"
     volumes:
       - mysql_payment_data:/var/lib/mysql
+      - ./database/init/payment_db.sql:/docker-entrypoint-initdb.d/01-apex-schema.sql:ro
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 10s

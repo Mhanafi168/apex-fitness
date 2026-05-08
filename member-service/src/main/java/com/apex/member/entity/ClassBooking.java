@@ -19,7 +19,10 @@ public class ClassBooking {
     @Column(nullable = false)
     private Long classId;        // references trainer-service
 
+    @Column(length = 255)
     private String className;
+
+    @Column(length = 255)
     private String trainerName;
     private LocalDateTime classDateTime;
 
@@ -28,6 +31,8 @@ public class ClassBooking {
 
     private LocalDateTime bookedAt;
     private LocalDateTime cancelledAt;
+
+    @Column(columnDefinition = "TEXT")
     private String notes;
 
     @PrePersist

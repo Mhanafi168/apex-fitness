@@ -23,6 +23,9 @@ public class Payment {
     private Long planId;
     private String planName;
 
+    /** Optional: gym class id (trainer-service) when payment is CLASS_BOOKING */
+    private Long relatedClassId;
+
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal amount;
 
@@ -35,6 +38,7 @@ public class Payment {
     @Enumerated(EnumType.STRING)
     private PaymentType paymentType;
 
+    @Column(columnDefinition = "TEXT")
     private String description;
     private String transactionReference;
 

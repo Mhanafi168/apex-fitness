@@ -280,13 +280,6 @@
   color: #ffffff;
 }
 
-.payment-method-group input[type="radio"]:checked ~ .card-form-container,
-.payment-method-group input[type="radio"]:checked ~ .ewallet-form-container,
-.payment-method-group input[type="radio"]:checked ~ .instapay-form-container,
-.payment-method-group input[type="radio"]:checked ~ .cash-form-container {
-  display: block;
-}
-
 
 .card-form,
 .ewallet-form,

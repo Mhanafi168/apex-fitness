@@ -12,6 +12,9 @@ public class PaymentResponse {
     private Long memberId;
     private String memberName;
     private String memberEmail;
+    private Long planId;
+    private String planName;
+    private Long relatedClassId;
     private BigDecimal amount;
     private String currency;
     private String status;
@@ -27,6 +30,9 @@ public class PaymentResponse {
                 .memberId(p.getMemberId())
                 .memberName(p.getMemberName())
                 .memberEmail(p.getMemberEmail())
+                .planId(p.getPlanId())
+                .planName(p.getPlanName())
+                .relatedClassId(p.getRelatedClassId())
                 .amount(p.getAmount())
                 .currency(p.getCurrency())
                 .status(p.getStatus() != null ? p.getStatus().name() : null)

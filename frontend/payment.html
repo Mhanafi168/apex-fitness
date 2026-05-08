@@ -20,6 +20,7 @@
   
   
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/payment.css">
   <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -39,7 +40,6 @@
         <div class="d-none d-md-flex align-items-center gap-4">
           <a href="index.html#about" class="nav-link" data-i18n="nav.about">About</a>
           <a href="index.html#pricing" class="nav-link" data-i18n="nav.pricing">Pricing</a>
-          <a href="index.html#gallery" class="nav-link" data-i18n="nav.gallery">Gallery</a>
           <a href="index.html#classes" class="nav-link" data-i18n="nav.classes">Classes</a>
           <a href="index.html#trainers" class="nav-link" data-i18n="nav.trainers">Trainers</a>
           <a href="index.html#contact" class="nav-link" data-i18n="nav.contact">Contact</a>
@@ -181,22 +181,22 @@
                   <form class="card-form">
                     <div class="form-group">
                       <label class="form-label" data-i18n="payment.cardHolder">Cardholder Name</label>
-                      <input type="text" class="form-control" placeholder="John Doe" required>
+                      <input type="text" class="form-control" id="card-holder" placeholder="John Doe" required>
                     </div>
                     
                     <div class="form-group">
                       <label class="form-label" data-i18n="payment.cardNumber">Card Number</label>
-                      <input type="text" class="form-control" placeholder="1234 5678 9012 3456" maxlength="19" required>
+                      <input type="text" class="form-control" id="card-number" placeholder="1234 5678 9012 3456" maxlength="19" required>
                     </div>
                     
                     <div class="form-row">
                       <div class="form-group">
                         <label class="form-label" data-i18n="payment.expiryDate">Expiry Date</label>
-                        <input type="text" class="form-control" placeholder="MM/YY" maxlength="5" required>
+                        <input type="text" class="form-control" id="card-expiry" placeholder="MM/YY" maxlength="5" required>
                       </div>
                       <div class="form-group">
                         <label class="form-label" data-i18n="payment.cvv">CVV</label>
-                        <input type="text" class="form-control" placeholder="123" maxlength="3" required>
+                        <input type="text" class="form-control" id="card-cvv" placeholder="123" maxlength="3" required>
                       </div>
                     </div>
                   </form>
@@ -255,7 +255,7 @@
                     
                     <div class="form-group">
                       <label class="form-label" data-i18n="payment.phoneNumber">Phone Number</label>
-                      <input type="tel" class="form-control" placeholder="+20 123 456 7890" required>
+                      <input type="tel" class="form-control" id="wallet-phone" placeholder="+20 123 456 7890" required>
                     </div>
                   </form>
                 </div>
@@ -281,7 +281,7 @@
                   <form class="instapay-form">
                     <div class="form-group">
                       <label class="form-label" data-i18n="payment.accountNumber">Account Number</label>
-                      <input type="text" class="form-control" placeholder="1234567890" required>
+                      <input type="text" class="form-control" id="instapay-account" placeholder="1234567890" required>
                     </div>
                     
                     <div class="form-group">

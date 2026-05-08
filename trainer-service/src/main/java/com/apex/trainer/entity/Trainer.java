@@ -24,7 +24,11 @@ public class Trainer {
     private String email;
 
     private String phoneNumber;
+
+    @Column(length = 512)
     private String specialization;
+
+    @Column(columnDefinition = "TEXT")
     private String bio;
     private Integer experienceYears;
 

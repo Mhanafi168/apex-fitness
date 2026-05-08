@@ -98,6 +98,12 @@ public class PaymentService {
 
     @Transactional
     public MembershipPlan createPlan(MembershipPlan plan) {
+        if (plan.getActive() == null) {
+            plan.setActive(true);
+        }
+        if (plan.getPersonalTrainingIncluded() == null) {
+            plan.setPersonalTrainingIncluded(false);
+        }
         return planRepository.save(plan);
     }
 
@@ -106,7 +112,7 @@ public class PaymentService {
     }
 
     public List<MembershipPlan> getActivePlans() {
-        return planRepository.findByActiveTrue();
+        return planRepository.findVisibleActivePlans();
     }
 
     public MembershipPlan getPlanById(Long id) {

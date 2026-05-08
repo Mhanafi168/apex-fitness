@@ -24,6 +24,8 @@ public class Member {
     private String email;
 
     private String phoneNumber;
+
+    @Column(length = 1024)
     private String address;
 
     @Enumerated(EnumType.STRING)

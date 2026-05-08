@@ -17,6 +17,9 @@ public class PaymentRequest {
     private Long planId;
     private String planName;
 
+    /** Optional class id for CLASS_BOOKING audit trail */
+    private Long relatedClassId;
+
     @NotNull(message = "Amount is required")
     @DecimalMin(value = "0.01", message = "Amount must be greater than 0")
     private BigDecimal amount;

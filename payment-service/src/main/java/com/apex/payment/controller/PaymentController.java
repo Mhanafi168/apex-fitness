@@ -9,6 +9,8 @@ import org.springframework.http.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.validation.Valid;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -31,6 +33,9 @@ public class PaymentController {
                 .memberId(req.getMemberId())
                 .memberName(req.getMemberName())
                 .memberEmail(req.getMemberEmail())
+                .planId(req.getPlanId())
+                .planName(req.getPlanName())
+                .relatedClassId(req.getRelatedClassId())
                 .amount(req.getAmount())
                 .currency(req.getCurrency() != null ? req.getCurrency() : "USD")
                 .paymentType(req.getPaymentType())
@@ -99,7 +104,7 @@ public class PaymentController {
 
     @PostMapping("/plans")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<MembershipPlan> createPlan(@RequestBody PlanRequest req) {
+    public ResponseEntity<MembershipPlan> createPlan(@Valid @RequestBody PlanRequest req) {
         MembershipPlan plan = MembershipPlan.builder()
                 .name(req.getName())
                 .description(req.getDescription())
@@ -132,7 +137,7 @@ public class PaymentController {
     @PutMapping("/plans/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<MembershipPlan> updatePlan(
-            @PathVariable Long id, @RequestBody PlanRequest req) {
+            @PathVariable Long id, @Valid @RequestBody PlanRequest req) {
         MembershipPlan plan = MembershipPlan.builder()
                 .name(req.getName())
                 .description(req.getDescription())
