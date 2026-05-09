@@ -1,6 +1,7 @@
 package com.apex.auth.dto;
 
 import lombok.*;
+import java.time.LocalDateTime;
 
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class UserResponse {
@@ -11,4 +12,5 @@ public class UserResponse {
     private String phoneNumber;
     private String role;
     private boolean active;
+    private LocalDateTime createdAt;
 }

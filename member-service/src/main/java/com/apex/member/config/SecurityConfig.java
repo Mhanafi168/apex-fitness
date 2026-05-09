@@ -24,6 +24,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.security.Key;
+import java.util.Collection;
 import java.util.List;
 
 @Configuration
@@ -66,7 +67,6 @@ public class SecurityConfig {
                             .getBody();
 
                     String username = claims.getSubject();
-                    String role     = claims.get("role", String.class);
                     Long jwtUserId = null;
                     Object rawUid = claims.get("userId");
                     if (rawUid instanceof Number) {
@@ -74,10 +74,12 @@ public class SecurityConfig {
                     }
                     req.setAttribute("jwtUserId", jwtUserId);
 
-                    if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                    String roleNorm = normalizeRoleClaim(claims);
+                    if (username != null && roleNorm != null
+                            && SecurityContextHolder.getContext().getAuthentication() == null) {
                         var auth = new UsernamePasswordAuthenticationToken(
                                 username, null,
-                                List.of(new SimpleGrantedAuthority("ROLE_" + role)));
+                                List.of(new SimpleGrantedAuthority("ROLE_" + roleNorm)));
                         SecurityContextHolder.getContext().setAuthentication(auth);
                     }
                 } catch (JwtException e) {
@@ -85,6 +87,29 @@ public class SecurityConfig {
                 }
             }
             chain.doFilter(req, res);
+        }
+
+        private static String normalizeRoleClaim(Claims claims) {
+            Object raw = claims.get("role");
+            if (raw == null) {
+                raw = claims.get("roles");
+            }
+            if (raw == null) {
+                return null;
+            }
+            String s;
+            if (raw instanceof String) {
+                s = ((String) raw).trim();
+            } else if (raw instanceof Collection<?> c && !c.isEmpty()) {
+                Object first = c.iterator().next();
+                s = first != null ? String.valueOf(first).trim() : "";
+            } else {
+                s = String.valueOf(raw).trim();
+            }
+            if (s.isEmpty()) {
+                return null;
+            }
+            return s.toUpperCase();
         }
 
         private Key getKey() {

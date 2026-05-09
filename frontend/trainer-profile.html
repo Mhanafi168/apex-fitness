@@ -146,13 +146,23 @@
               <p class="trainer-bio" id="trainerBio">Loading bio...</p>
               
               <div class="trainer-actions">
-                <button class="btn-primary" data-i18n="trainer.bookSession">BOOK A SESSION</button>
-                <button class="btn-secondary" data-i18n="trainer.contactMe">CONTACT ME</button>
+                <button type="button" class="btn-primary" id="trainerScrollToClassesBtn">VIEW CLASSES</button>
+                <a class="btn-secondary text-decoration-none text-center d-inline-flex align-items-center justify-content-center" id="trainerContactMailLink" href="#" data-i18n="trainer.contactMe">CONTACT</a>
               </div>
             </div>
           </div>
         </div>
       </div>
+    </section>
+
+    <section class="trainer-classes-section container py-5 px-3" id="trainerClassesSection">
+      <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-3">
+        <h2 class="text-white mb-0 fs-4" style="font-family: 'Syncopate', sans-serif; font-weight: 700;">UPCOMING CLASSES</h2>
+        <a href="index.html#classes" class="text-accent text-decoration-none small fw-bold">All classes →</a>
+      </div>
+      <p class="text-secondary small mb-3">Book a scheduled class below (membership class booking rules apply).</p>
+      <div id="trainer-profile-book-msg" role="status" style="display:none;"></div>
+      <div class="row g-4" id="trainerClassesCards"></div>
     </section>
 
   </main>

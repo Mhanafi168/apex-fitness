@@ -68,14 +68,43 @@ async function authFetch(url, options = {}) {
   }
 }
 
-// Booking a class is FREE — no payment required before booking
-// These stubs are kept so no other code breaks
 async function checkHasClassBookingPayment(memberId) {
-  return true; // always return true — no payment gate
+  try {
+    const result = await publicFetch('/api/payments/member/' + encodeURIComponent(memberId) + '/has-class-payment');
+    return result && result.hasPayment === true;
+  } catch (e) {
+    console.error('Error checking class booking payment:', e.message);
+    return false;
+  }
 }
 
 async function ensureClassBookingPayment(memberId, relatedClassId) {
-  // No-op: booking a class does not require a pre-payment
+  const hasPayment = await checkHasClassBookingPayment(memberId);
+  if (hasPayment) {
+    return true;
+  }
+
+  showBookingMessage('A class booking payment is required. Processing payment now...', 'info');
+  const payment = await apiProcessPayment({
+    memberId,
+    memberName: localStorage.getItem('apex_username') || 'Member',
+    memberEmail: '',
+    relatedClassId: Number.isFinite(Number(relatedClassId)) ? parseInt(relatedClassId, 10) : undefined,
+    amount: APEX_CLASS_BOOKING_FEE,
+    currency: 'USD',
+    paymentType: APEX_PAYMENT_TYPE.CLASS_BOOKING,
+    description: `Class booking fee for class ${relatedClassId}`
+  });
+
+  if (!payment || !payment.id) {
+    throw new Error('Could not process class booking payment. Please try again.');
+  }
+
+  const verified = await checkHasClassBookingPayment(memberId);
+  if (!verified) {
+    throw new Error('Class booking payment could not be verified. Please contact support.');
+  }
+  return true;
 }
 
 // Format date nicely
@@ -533,7 +562,14 @@ async function doLogin() {
     const data = await res.json().catch(() => null);
     if (data?.accessToken) {
       saveAuth(data);
-      window.location.href = 'profile.html';
+      // Return to class page if the user came from a "Login to Book" redirect
+      const classRedirect = localStorage.getItem('apex_class_redirect');
+      if (classRedirect) {
+        localStorage.removeItem('apex_class_redirect');
+        window.location.href = classRedirect;
+      } else {
+        window.location.href = 'profile.html';
+      }
     } else {
       showError((data && (data.error || data.message)) || 'Invalid credentials');
     }
@@ -555,7 +591,14 @@ async function doSignup() {
     const data = await res.json().catch(() => null);
     if (data?.accessToken) {
       saveAuth(data);
-      window.location.href = 'profile.html';
+      // Return to class page if the user came from a "Login to Book" redirect
+      const classRedirect = localStorage.getItem('apex_class_redirect');
+      if (classRedirect) {
+        localStorage.removeItem('apex_class_redirect');
+        window.location.href = classRedirect;
+      } else {
+        window.location.href = 'profile.html';
+      }
     } else {
       showError((data && (data.error || data.message)) || 'Signup failed');
     }
@@ -730,46 +773,48 @@ function getUserIdFromToken() {
 
 async function resolveCurrentMember() {
   try {
-    // Try to get userId from JWT token first (fastest)
+    // Get userId directly from JWT token - no extra API call needed
     const userId = getUserIdFromToken();
     if (userId) {
-      const m = await apiGetMemberByUserId(userId);
-      if (m && m.id != null) return m;
+      try {
+        const m = await apiGetMemberByUserId(userId);
+        if (m && m.id != null) return m;
+      } catch (e) {
+        // Member profile may not exist yet — will be created by ensureMemberForCurrentUser
+        console.log('Member profile not found for userId:', userId);
+      }
     }
-    // Fallback: call /api/auth/me to get current user info
-    const me = await authFetch('/api/auth/me');
-    if (!me || me.id == null) return null;
-    const m = await apiGetMemberByUserId(me.id);
-    return m && m.id != null ? m : null;
+    return null;
   } catch (e) {
     return null;
   }
 }
 
 async function ensureMemberForCurrentUser() {
-  let userId = getUserIdFromToken();
-  let userInfo = null;
-
-  if (!userId) {
-    userInfo = await authFetch('/api/auth/me');
-    if (!userInfo || userInfo.id == null) return null;
-    userId = userInfo.id;
+  // Step 1: try to get existing member using JWT userId directly
+  const userId = getUserIdFromToken();
+  if (userId) {
+    try {
+      const existing = await apiGetMemberByUserId(userId);
+      if (existing && existing.id != null) return existing;
+    } catch (e) { /* not found — will create */ }
   }
 
-  const existing = await apiGetMemberByUserId(userId);
-  if (existing && existing.id != null) return existing;
+  if (!userId) {
+    console.error('No userId found in token — cannot create member profile');
+    return null;
+  }
 
-  // Create member profile automatically
-  if (!userInfo) userInfo = await authFetch('/api/auth/me');
+  // Step 2: create member profile automatically using stored data
   const username = localStorage.getItem('apex_username') || 'user';
-  const email = (userInfo && userInfo.email) || (username + '@apex.com');
-  const fullName = (userInfo && userInfo.fullName) || username;
+  const email = username + '@apex.com';
+  const fullName = username;
 
   try {
     const created = await authFetch('/api/members', {
       method: 'POST',
       body: JSON.stringify({
-        userId: userId,
+        userId: Number(userId),
         fullName: fullName,
         email: email,
         phoneNumber: '',
@@ -780,6 +825,7 @@ async function ensureMemberForCurrentUser() {
     });
     return created && created.id != null ? created : null;
   } catch (e) {
+    console.error('Could not create member profile:', e.message);
     return null;
   }
 }
@@ -1125,13 +1171,17 @@ let __currentClassDetails = null;
 
 async function joinClass() {
   const token = localStorage.getItem('apex_token');
-  const role = localStorage.getItem('apex_role');
   if (!token) {
+    // Save the current class URL so we can return after login
+    localStorage.setItem('apex_class_redirect', window.location.href);
     window.location.href = 'login.html';
     return;
   }
-  if (role === 'ADMIN' || role === 'TRAINER') {
-    showBookingMessage('Only members can book classes. Admin and trainer accounts cannot book.', 'info');
+
+  // Only MEMBER role is allowed to book classes
+  const role = (localStorage.getItem('apex_role') || '').toUpperCase();
+  if (role && role !== 'MEMBER') {
+    showBookingMessage('Class booking is only available for members. Please log in with a member account.', 'error');
     return;
   }
   const classId = new URLSearchParams(window.location.search).get('id');
@@ -1188,7 +1238,9 @@ async function joinClass() {
     showBookingMessage('Successfully enrolled! Booking #' + (booking && booking.id ? booking.id : ''), 'success');
   } catch (e) {
     let msg = e.message || 'Booking failed';
-    if (e.status === 402 || String(msg).toLowerCase().includes('payment')) {
+    if (e.status === 403) {
+      msg = 'Booking is restricted to authenticated users. Please log in and try again.';
+    } else if (e.status === 402 || String(msg).toLowerCase().includes('payment')) {
       msg = 'Class booking payment could not be verified. Please try again or contact support.';
     }
     if (String(msg).toLowerCase().includes('already')) {
@@ -1245,14 +1297,6 @@ async function loadClassDetailsAndWireBooking() {
   if (!joinBtn) return;
   joinBtn.id = 'join-btn';
 
-  const role = localStorage.getItem('apex_role');
-  if (role === 'ADMIN' || role === 'TRAINER') {
-    joinBtn.textContent = 'Members Only';
-    joinBtn.disabled = true;
-    joinBtn.style.opacity = '0.5';
-    return;
-  }
-
   const enrolledLocal = JSON.parse(localStorage.getItem('apex_enrolled') || '[]');
   if (enrolledLocal.includes(parseInt(classId, 10))) {
     joinBtn.textContent = '✓ Enrolled';
@@ -1262,18 +1306,37 @@ async function loadClassDetailsAndWireBooking() {
     return;
   }
 
+  const token = localStorage.getItem('apex_token');
+  const role = (localStorage.getItem('apex_role') || '').toUpperCase();
+
   if (gymClass && gymClass.spotsAvailable != null && Number(gymClass.spotsAvailable) <= 0) {
+    // Class is full
     joinBtn.textContent = 'Class Full';
     joinBtn.disabled = true;
     joinBtn.style.opacity = '0.5';
+  } else if (!token) {
+    // Guest user — prompt to log in (saves return URL so they land back here after login)
+    joinBtn.textContent = 'Login to Book';
+    joinBtn.disabled = false;
+    joinBtn.onclick = () => {
+      localStorage.setItem('apex_class_redirect', window.location.href);
+      window.location.href = 'login.html';
+    };
+  } else if (role && role !== 'MEMBER') {
+    // Logged in but not a MEMBER (e.g. ADMIN / TRAINER)
+    joinBtn.textContent = 'Members Only';
+    joinBtn.disabled = true;
+    joinBtn.title = 'Class booking is only available for members';
+    joinBtn.style.opacity = '0.6';
   } else {
+    // Authenticated MEMBER — wire the booking action
     joinBtn.textContent = 'Join Now';
     joinBtn.disabled = false;
     joinBtn.onclick = () => joinClass();
   }
 
-  const token = localStorage.getItem('apex_token');
-  if (token && classId) {
+  // Check server-side enrollment status (only for authenticated MEMBERs)
+  if (token && role === 'MEMBER' && classId) {
     try {
       const member = await resolveCurrentMember();
       if (member && member.id != null) {
@@ -1551,10 +1614,9 @@ async function createTrainer() {
     alert('Admin access required.');
     return;
   }
-  const userId = document.getElementById('trainer-userId')?.value
-    || document.getElementById('t-userid')?.value
-    || document.getElementById('trainer_user_id')?.value
-    || document.getElementById('adminCreateTrainerUserId')?.value;
+  const userSelect = document.getElementById('adminCreateTrainerUserSelect');
+  const userIdInput = document.getElementById('adminCreateTrainerUserId');
+  const userId = userSelect?.value || userIdInput?.value;
   const fullName = document.getElementById('trainer-fullname')?.value
     || document.getElementById('t-fullname')?.value
     || document.getElementById('trainer_name')?.value
@@ -1574,8 +1636,21 @@ async function createTrainer() {
   const exp = document.getElementById('trainer-exp')?.value
     || document.getElementById('t-exp')?.value
     || document.getElementById('adminCreateTrainerExp')?.value || '0';
+  const msgEl = document.getElementById('adminCreateTrainerMsg');
+
+  if (msgEl) {
+    msgEl.textContent = '';
+    msgEl.classList.remove('success');
+  }
+
   if (!userId || !fullName || !email) {
-    alert('Please fill in User ID, Full Name and Email.');
+    const message = 'Please select a user and provide a name and email for the trainer.';
+    if (msgEl) {
+      msgEl.textContent = message;
+      msgEl.classList.add('visible');
+    } else {
+      alert(message);
+    }
     return;
   }
 
@@ -1584,12 +1659,15 @@ async function createTrainer() {
   if (btn) { btn.textContent = 'Creating...'; btn.disabled = true; }
   try {
     const users = await apiGetAllUsers();
-    const exists = Array.isArray(users) && users.some((u) => Number(u.id) === Number(userId));
-    if (!exists) throw new Error('User ID does not exist in auth users.');
+    const user = Array.isArray(users)
+      ? users.find((u) => String(u.id) === String(userId) || String(u.username) === String(userId))
+      : null;
+    if (!user || !user.id) throw new Error('Selected user does not exist.');
+
     const trainer = await authFetch('/api/trainers', {
       method: 'POST',
       body: JSON.stringify({
-        userId: parseInt(userId, 10),
+        userId: parseInt(user.id, 10),
         fullName: String(fullName).trim(),
         email: String(email).trim(),
         phoneNumber: String(phone).trim(),
@@ -1598,10 +1676,21 @@ async function createTrainer() {
         experienceYears: parseInt(exp, 10) || 0
       })
     });
-    alert('Trainer created successfully! ID: ' + trainer.id);
+    if (msgEl) {
+      msgEl.textContent = 'Trainer created successfully! ID: ' + (trainer?.id ?? 'unknown');
+      msgEl.classList.add('visible', 'success');
+    } else {
+      alert('Trainer created successfully! ID: ' + (trainer?.id ?? 'unknown'));
+    }
     window.location.reload();
   } catch (e) {
-    alert('Error: ' + e.message);
+    const message = 'Error: ' + (e.message || 'Could not create trainer.');
+    if (msgEl) {
+      msgEl.textContent = message;
+      msgEl.classList.add('visible');
+    } else {
+      alert(message);
+    }
   } finally {
     if (btn) { btn.textContent = 'Create Trainer'; btn.disabled = false; }
   }
@@ -1640,12 +1729,19 @@ async function createClass() {
     || document.getElementById('c-type')?.value
     || document.getElementById('adminCreateClassType')?.value || 'OTHER';
   const msgEl = document.getElementById('adminCreateClassMsg');
-  if (msgEl) msgEl.textContent = '';
+  if (msgEl) {
+    msgEl.textContent = '';
+    msgEl.classList.remove('visible', 'success');
+  }
 
   if (!name || !datetime) {
     const msg = 'Please fill in Class Name and Date/Time.';
-    if (msgEl) msgEl.textContent = msg;
-    else alert(msg);
+    if (msgEl) {
+      msgEl.textContent = msg;
+      msgEl.classList.add('visible');
+    } else {
+      alert(msg);
+    }
     return;
   }
 
@@ -1671,8 +1767,12 @@ async function createClass() {
 
     if (role === 'ADMIN' && (!finalTrainerId || Number.isNaN(finalTrainerId))) {
       const msg = 'Trainer is required. Please select a trainer before creating a class.';
-      if (msgEl) msgEl.textContent = msg;
-      else alert(msg);
+      if (msgEl) {
+        msgEl.textContent = msg;
+        msgEl.classList.add('visible');
+      } else {
+        alert(msg);
+      }
       return;
     }
 
@@ -1695,8 +1795,12 @@ async function createClass() {
     window.location.reload();
   } catch (e) {
     const msg = 'Error: ' + (e.message || 'Could not create class');
-    if (msgEl) msgEl.textContent = msg;
-    else alert(msg);
+    if (msgEl) {
+      msgEl.textContent = msg;
+      msgEl.classList.add('visible');
+    } else {
+      alert(msg);
+    }
   } finally {
     if (btn) { btn.textContent = 'Create Class'; btn.disabled = false; }
   }
@@ -1840,17 +1944,26 @@ async function initProfilePage() {
       }
 
       // Create trainer form
+      const userSelectOptions = Array.isArray(users) && users.length
+        ? `
+            <select id="adminCreateTrainerUserSelect" class="form-control">
+              <option value="">Select a registered user</option>
+              ${users.map((u) => `<option value="${u.id}">${escapeHtml(u.username || u.email || 'User')} — ${escapeHtml(u.email || '-')}</option>`).join('')}
+            </select>
+          `
+        : `<input id="adminCreateTrainerUserId" class="form-control" type="number" min="1" placeholder="User ID">`;
+
       const createTrainerCard = mkCard('Create Trainer', `
-        <div class="profile-details">
-          <div class="detail-item"><span class="detail-label">User ID</span><input id="adminCreateTrainerUserId" class="form-control" type="number" min="1"></div>
-          <div class="detail-item"><span class="detail-label">Full Name</span><input id="adminCreateTrainerFullName" class="form-control"></div>
-          <div class="detail-item"><span class="detail-label">Email</span><input id="adminCreateTrainerEmail" class="form-control" type="email"></div>
-          <div class="detail-item"><span class="detail-label">Phone</span><input id="adminCreateTrainerPhone" class="form-control"></div>
-          <div class="detail-item"><span class="detail-label">Specialization</span><input id="adminCreateTrainerSpec" class="form-control"></div>
-          <div class="detail-item"><span class="detail-label">Bio</span><input id="adminCreateTrainerBio" class="form-control"></div>
-          <div class="detail-item"><span class="detail-label">Experience Years</span><input id="adminCreateTrainerExp" class="form-control" type="number" min="0"></div>
-          <div class="detail-item"><button id="adminCreateTrainerBtn" class="action-link">Create Trainer</button></div>
-          <div id="adminCreateTrainerMsg" class="empty-state"></div>
+        <div class="profile-details form-section">
+          <div class="form-group"><label>User account</label>${userSelectOptions}</div>
+          <div class="form-group"><label>Full Name</label><input id="adminCreateTrainerFullName" class="form-control" placeholder="Trainer name"></div>
+          <div class="form-group"><label>Email</label><input id="adminCreateTrainerEmail" class="form-control" type="email" placeholder="Trainer email"></div>
+          <div class="form-group"><label>Phone</label><input id="adminCreateTrainerPhone" class="form-control" placeholder="Trainer phone"></div>
+          <div class="form-group"><label>Specialization</label><input id="adminCreateTrainerSpec" class="form-control" placeholder="e.g. HIIT, Yoga"></div>
+          <div class="form-group"><label>Bio</label><textarea id="adminCreateTrainerBio" class="form-control" rows="2" placeholder="Short trainer bio"></textarea></div>
+          <div class="form-group"><label>Experience Years</label><input id="adminCreateTrainerExp" class="form-control" type="number" min="0" placeholder="0"></div>
+          <div class="form-group"><button id="adminCreateTrainerBtn" class="btn-admin-create">Create Trainer</button></div>
+          <div id="adminCreateTrainerMsg" class="admin-msg"></div>
         </div>
       `);
       dashboardSections.appendChild(createTrainerCard);
@@ -1863,17 +1976,17 @@ async function initProfilePage() {
            </select>`
         : `<input id="adminCreateClassTrainerId" class="form-control" type="number" min="1" placeholder="Trainer ID">`;
       const createClassCard = mkCard('Create Class', `
-        <div class="profile-details">
-          <div class="detail-item"><span class="detail-label">Name</span><input id="adminCreateClassName" class="form-control"></div>
-          <div class="detail-item"><span class="detail-label">Description</span><input id="adminCreateClassDesc" class="form-control"></div>
-          <div class="detail-item"><span class="detail-label">Location</span><input id="adminCreateClassLocation" class="form-control"></div>
-          <div class="detail-item"><span class="detail-label">Trainer</span>${trainerSelect}</div>
-          <div class="detail-item"><span class="detail-label">Date Time</span><input id="adminCreateClassDateTime" class="form-control" type="datetime-local"></div>
-          <div class="detail-item"><span class="detail-label">Duration Minutes</span><input id="adminCreateClassDuration" class="form-control" type="number" min="1"></div>
-          <div class="detail-item"><span class="detail-label">Max Capacity</span><input id="adminCreateClassCapacity" class="form-control" type="number" min="1"></div>
-          <div class="detail-item"><span class="detail-label">Class Type</span><input id="adminCreateClassType" class="form-control" placeholder="HIIT/YOGA/..."></div>
-          <div class="detail-item"><button id="adminCreateClassBtn" class="action-link">Create Class</button></div>
-          <div id="adminCreateClassMsg" class="empty-state"></div>
+        <div class="profile-details form-section">
+          <div class="form-group"><label>Name</label><input id="adminCreateClassName" class="form-control" placeholder="e.g. Morning HIIT"></div>
+          <div class="form-group"><label>Description</label><textarea id="adminCreateClassDesc" class="form-control" rows="2" placeholder="Brief description"></textarea></div>
+          <div class="form-group"><label>Location</label><input id="adminCreateClassLocation" class="form-control" placeholder="Gym room or online"></div>
+          <div class="form-group"><label>Trainer</label>${trainerSelect}</div>
+          <div class="form-group"><label>Date & Time</label><input id="adminCreateClassDateTime" class="form-control" type="datetime-local"></div>
+          <div class="form-group"><label>Duration Minutes</label><input id="adminCreateClassDuration" class="form-control" type="number" min="1" placeholder="60"></div>
+          <div class="form-group"><label>Max Capacity</label><input id="adminCreateClassCapacity" class="form-control" type="number" min="1" placeholder="20"></div>
+          <div class="form-group"><label>Class Type</label><input id="adminCreateClassType" class="form-control" placeholder="HIIT/YOGA/Strength"></div>
+          <div class="form-group"><button id="adminCreateClassBtn" class="btn-admin-create">Create Class</button></div>
+          <div id="adminCreateClassMsg" class="admin-msg"></div>
         </div>
       `);
       dashboardSections.appendChild(createClassCard);
@@ -2005,6 +2118,23 @@ async function initProfilePage() {
       const createClassBtn = document.getElementById('adminCreateClassBtn');
       if (createClassBtn) {
         createClassBtn.onclick = () => createClass();
+      }
+
+      const trainerUserSelect = document.getElementById('adminCreateTrainerUserSelect');
+      if (trainerUserSelect) {
+        trainerUserSelect.addEventListener('change', () => {
+          const selectedUser = users.find((u) => String(u.id) === String(trainerUserSelect.value));
+          const fullNameEl = document.getElementById('adminCreateTrainerFullName');
+          const emailEl = document.getElementById('adminCreateTrainerEmail');
+          if (selectedUser) {
+            if (fullNameEl && !fullNameEl.value) {
+              fullNameEl.value = selectedUser.fullName || selectedUser.username || '';
+            }
+            if (emailEl && !emailEl.value) {
+              emailEl.value = selectedUser.email || '';
+            }
+          }
+        });
       }
 
       const createPlanBtn = document.getElementById('adminCreatePlanBtn');

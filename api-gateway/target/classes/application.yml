@@ -98,6 +98,22 @@ spring:
             - Method=GET
           filters:
             - StripPrefix=0
+        - id: payment-public-class-booking-check
+          uri: lb://payment-service
+          order: -10
+          predicates:
+            - Path=/api/payments/member/{memberId:[0-9]+}/has-class-payment
+            - Method=GET
+          filters:
+            - StripPrefix=0
+        - id: payment-public-last-class-payment
+          uri: lb://payment-service
+          order: -10
+          predicates:
+            - Path=/api/payments/member/{memberId:[0-9]+}/last-class-payment-time
+            - Method=GET
+          filters:
+            - StripPrefix=0
         - id: payment-service
           uri: lb://payment-service
           predicates:

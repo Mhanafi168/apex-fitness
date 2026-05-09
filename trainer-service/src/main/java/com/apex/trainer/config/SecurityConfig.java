@@ -26,6 +26,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.security.Key;
+import java.util.Collection;
 import java.util.List;
 
 @Configuration
@@ -71,18 +72,48 @@ public class SecurityConfig {
                             .setSigningKey(getKey()).build()
                             .parseClaimsJws(token).getBody();
                     String username = claims.getSubject();
-                    String role     = claims.get("role", String.class);
-                    if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                    String roleNorm = normalizeRoleClaim(claims);
+                    if (username != null && roleNorm != null
+                            && SecurityContextHolder.getContext().getAuthentication() == null) {
                         var auth = new UsernamePasswordAuthenticationToken(
                                 username, null,
-                                List.of(new SimpleGrantedAuthority("ROLE_" + role)));
+                                List.of(new SimpleGrantedAuthority("ROLE_" + roleNorm)));
                         SecurityContextHolder.getContext().setAuthentication(auth);
+                    } else if (username != null && roleNorm == null) {
+                        log.warn("[TRAINER] JWT has no usable role claim; subject={}", username);
                     }
                 } catch (JwtException e) {
                     log.warn("[TRAINER] JWT validation failed: {}", e.getMessage());
                 }
             }
             chain.doFilter(req, res);
+        }
+
+        /**
+         * Maps JWT role to Spring {@code ROLE_*} authorities. Handles string values, collections,
+         * and normalizes case so {@code hasRole('ADMIN')} matches tokens issued with any casing.
+         */
+        private static String normalizeRoleClaim(Claims claims) {
+            Object raw = claims.get("role");
+            if (raw == null) {
+                raw = claims.get("roles");
+            }
+            if (raw == null) {
+                return null;
+            }
+            String s;
+            if (raw instanceof String) {
+                s = ((String) raw).trim();
+            } else if (raw instanceof Collection<?> c && !c.isEmpty()) {
+                Object first = c.iterator().next();
+                s = first != null ? String.valueOf(first).trim() : "";
+            } else {
+                s = String.valueOf(raw).trim();
+            }
+            if (s.isEmpty()) {
+                return null;
+            }
+            return s.toUpperCase();
         }
 
         private Key getKey() {

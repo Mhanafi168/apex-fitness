@@ -27,7 +27,7 @@ public class PaymentController {
     // ── Payment endpoints ─────────────────────────────────────────────────────
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN','MEMBER')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<PaymentResponse> processPayment(@RequestBody PaymentRequest req) {
         Payment payment = Payment.builder()
                 .memberId(req.getMemberId())

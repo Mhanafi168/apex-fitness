@@ -42,7 +42,9 @@ public class JwtAuthFilter extends AbstractGatewayFilterFactory<JwtAuthFilter.Co
                 if ("/api/trainers/active".equals(path)
                         || path.startsWith("/api/trainers/classes")
                         || path.matches("/api/trainers/\\d+")
-                        || "/api/payments/plans/active".equals(path)) {
+                        || "/api/payments/plans/active".equals(path)
+                        || path.matches("/api/payments/member/[0-9]+/has-class-payment")
+                        || path.matches("/api/payments/member/[0-9]+/last-class-payment-time")) {
                     return chain.filter(exchange);
                 }
             }

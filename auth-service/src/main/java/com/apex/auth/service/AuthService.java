@@ -115,13 +115,14 @@ public class AuthService {
 
     private UserResponse toResponse(User u) {
         return UserResponse.builder()
-                .id(u.getId())
-                .username(u.getUsername())
-                .email(u.getEmail())
-                .fullName(u.getFullName())
-                .phoneNumber(u.getPhoneNumber())
-                .role(u.getRole().name())
-                .active(u.isActive())
-                .build();
+            .id(u.getId())
+            .username(u.getUsername())
+            .email(u.getEmail())
+            .fullName(u.getFullName())
+            .phoneNumber(u.getPhoneNumber())
+            .role(u.getRole().name())
+            .active(u.isActive())
+            .createdAt(u.getCreatedAt())
+            .build();
     }
 }

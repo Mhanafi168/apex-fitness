@@ -24,7 +24,7 @@ public class MemberController {
     // ── Member CRUD ───────────────────────────────────────────────────────────
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN','MEMBER')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<MemberResponse> createMember(@Valid @RequestBody MemberRequest req) {
         Member member = Member.builder()
                 .userId(req.getUserId())
@@ -56,7 +56,7 @@ public class MemberController {
     }
 
     @GetMapping("/user/{userId}")
-    @PreAuthorize("hasAnyRole('ADMIN','MEMBER')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<MemberResponse> getMemberByUserId(@PathVariable Long userId) {
         return ResponseEntity.ok(MemberResponse.from(memberService.getMemberByUserId(userId)));
     }
@@ -85,7 +85,7 @@ public class MemberController {
     // ── Bookings ──────────────────────────────────────────────────────────────
 
     @PostMapping("/bookings")
-    @PreAuthorize("hasAnyRole('ADMIN','MEMBER')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<BookingResponse> bookClass(@Valid @RequestBody BookingRequest req) {
         ClassBooking booking = ClassBooking.builder()
                 .memberId(req.getMemberId())
